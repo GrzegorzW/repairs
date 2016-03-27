@@ -1,0 +1,4 @@
+<li {% if(app.request.get('_route') starts with 'admin_report') %} class="active"{% endif %}><a
+            href="{{ path('admin_report') }}" title="Raport">Raport</a></li>
+<li {% if(app.request.get('_route') starts with 'admin_management') %} class="active"{% endif %}><a
+            href="{{ path('admin_management') }}" title="Zarządzanie">Zarządzanie</a></li>

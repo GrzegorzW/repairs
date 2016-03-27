@@ -1,0 +1,56 @@
+<div class="row">
+    <div class="col-md-12 limit-select-place">
+        <div class="pull-right limit-select-widget">
+            <form method="get" name="formPaginationLimit" id="formPaginationLimit">
+                <div class="form-group-sm">
+                    <label for="limit" class="sr-only"></label>
+                    <select name="limit" id="limit" class="form-control">
+                        {% set min = 20 %}
+                        {% set mid = 40 %}
+                        {% set max = 100 %}
+
+                        {% if app.request.session.has('limit') %}
+                            <option value="{{ min }}"
+                                    {% if app.request.session.get('limit') == min %}selected{% endif %}>{{ min }}</option>
+                            <option value="{{ mid }}"
+                                    {% if app.request.session.get('limit') == mid %}selected{% endif %}>{{ mid }}</option>
+                            <option value="{{ max }}"
+                                    {% if app.request.session.get('limit') == max %}selected{% endif %}>{{ max }}</option>
+                        {% else %}
+                            <option value="{{ min }}" selected>{{ min }}</option>
+                            <option value="{{ mid }}">{{ mid }}</option>
+                            <option value="{{ max }}">{{ max }}</option>
+                        {% endif %}
+                    </select>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function(){
+        $.extend({
+            getQueryParameters : function(str) {
+                return (str || document.location.search)
+                        .replace(/(^\?)/,'')
+                        .split("&")
+                        .map(function(n){return n = n.split("="),this[n[0]] = n[1],this}.bind({}))[0];
+            }
+        });
+        $('#limit').change(function () {
+            var params = $.getQueryParameters();
+            params.limit = $('#limit').val();
+            params.page = 1;
+
+            window.location.replace([
+                location.protocol,
+                '//',
+                location.host,
+                location.pathname,
+                '?',
+                $.param(params)
+            ].join(''));
+        });
+    });
+</script>

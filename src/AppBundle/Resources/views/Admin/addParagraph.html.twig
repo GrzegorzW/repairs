@@ -1,0 +1,28 @@
+{% extends 'AppBundle::base.html.twig' %}
+
+{% block title %}
+    | Dodaj punkt regulaminu
+{% endblock %}
+
+{% block pageContainer %}
+
+    <h4>Treść punktu regulaminu</h4>
+    <small class="text-muted">
+        * Numer jest nadawany automatycznie.
+    </small>
+
+    <div class="row">
+        <div class="col-md-6">
+            {{ form_start(form) }}
+            {{ form_row(form.paragraph) }}
+            <div class="form-inline">
+                <a href="{{ path('admin_management') }}" class="btn btn-sm btn-default">
+                    Powrót
+                </a>
+                {{ form_row(form.save, { 'attr': {'class': 'btn btn-sm btn-success'}}) }}
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

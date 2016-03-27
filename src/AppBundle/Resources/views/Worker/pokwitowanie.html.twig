@@ -1,0 +1,176 @@
+{% extends 'AppBundle::base.html.twig' %}
+
+{% block title %}
+    | Nowe pokwitowanie | Drukuj formularz
+{% endblock %}
+
+{% block pageContainer %}
+
+    <label for="print-it" class="sr-only">Drukuj</label>
+    <input type="button" autofocus="autofocus" id="print-it" class="btn btn-success hidden-print print-it"
+           onclick="window.print()" value="Drukuj"/>
+
+    <div class="hidden-print">
+        <hr>
+    </div>
+
+    {% for flashMessage in app.session.flashbag.get('success') %}
+        <h4 class="alert alert-success hidden-print">{{ flashMessage }}</h4>
+    {% endfor %}
+
+    <div class="row" style="font-size: 12px;">
+        <div class="col-md-12">
+            <div id="city" class="text-right pull-right">
+                {{ repair.localizationCity }}, {{ repair.repairStartDate | date('d.m.Y') }}
+            </div>
+
+            <div id="logo" style="max-width: 150px;">
+                {#{% image 'bundles/app/images/logo1.jpg' %}#}
+                {#<img src="{{ asset_url }}"/>#}
+                {#{% endimage %}#}
+
+                <img src="
+                {% if app.user.localization.company.logoFile is not empty %}
+                    {{ asset(vich_uploader_asset(app.user.localization.company, 'logoFile')) }}
+                {% else %}
+                    {#{{ asset('bundles/app/images/mf-logo.png') }}#}
+                    {{ asset('bundles/app/images/favicon.ico') }}
+                {% endif %}
+                "/>
+
+            </div>
+        </div>
+    </div>
+    <div class="row" style="margin-top: 10px;">
+        <div class="col-md-12">
+            <div class="sheet">
+                <p>{{ repair.companyName }}</p>
+                <p>ul. {{ repair.companyStreet }}</p>
+                <p>{{ repair.companyPostCode }} {{ repair.companyCity }}</p>
+                <p>NIP: {{ repair.companyNIP }}</p>
+                <p>{{ repair.companyMainSite }}</p>
+            </div>
+            <div class="pull-right text-right sheet">
+                {% spaceless %}
+                    <p>{{ repair.clientName | trim }} {{ repair.clientSurname | trim }}</p>
+                    {% if repair.clientCompanyName %}
+                    <p>{{ repair.clientCompanyName | trim }}</p>
+                {% endif %}
+                    {% if repair.clientCompanyAddress %}
+                    <p>ul. {{ repair.clientCompanyAddress | trim }}</p>
+                {% endif %}
+                    <p>
+                    {% if repair.clientCompanyPostCode %}
+                        {{ repair.clientCompanyPostCode | trim }}
+                    {% endif %}
+                    {% if repair.clientCompanyCity %}
+                        {{ repair.clientCompanyCity | trim }}
+                    {% endif %}
+                </p>
+                    {% if repair.clientCompanyNIP %}
+                    <p>NIP: {{ repair.clientCompanyNIP | trim }}</p>
+                {% endif %}
+                    <p>tel.: {{ phone_number_format(repair.clientTel) }}</p>
+                    {% if repair.clientEmail %}
+                    <p>e-mail: {{ repair.clientEmail | trim }}</p>
+                {% endif %}
+                {% endspaceless %}
+            </div>
+            <div class="sheet">
+            {% if repair.localizationStreet != repair.companyStreet %}
+                <p style="margin-top: 5px;"><strong>Siedziba:</strong></p>
+                <p>ul. {{ repair.localizationStreet }}</p>
+                <p>{{ repair.localizationPostCode }} {{ repair.localizationCity }}</p>
+            {% endif %}
+                <p>tel.: <u>{{ phone_number_format(repair.localizationTel1) }}</u>
+                    {% if repair.localizationTel2 is not null %}
+                        , {{ phone_number_format(repair.localizationTel2) }}
+                    {% endif %}
+                    {% if repair.localizationTel3 is not null %}
+                        , {{ phone_number_format(repair.localizationTel3) }}
+                    {% endif %}</p>
+                <br>
+            </div>
+        </div>
+    </div>
+    <div class="row" style="margin-bottom: 10px;">
+        <div class="col-md-12">
+            <div class="text-center">
+                <h4 style="margin-bottom: 0">
+                    <strong>POKWITOWANIE</strong><br>
+                </h4>
+                <span>
+                    ID naprawy: {{ repair.repairAltId }}
+                </span>
+            </div>
+        </div>
+    </div>
+    <div class="row" style="font-size: 12px">
+        <div class="col-md-12">
+            <div class="table-responsive">
+                <table class="table table-bordered table-condensed" style="margin-bottom: 10px">
+                    <tr>
+                        <td><strong>Marka:</strong> {{ repair.deviceBrand }}</td>
+                        <td><strong>Model:</strong> {{ repair.deviceModel }}</td>
+                        <td><strong>Numer seryjny:</strong> {{ repair.deviceSerial }}</td>
+                    </tr>
+                </table>
+                <table class="table table-bordered table-condensed" style="margin-bottom: 0">
+                    <tr>
+                        <td colspan="3"><strong>Opis usterki i uwagi:</strong> {{ repair.repairDescription }}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="3"><strong>Dodatkowo:</strong> {{ repair.repairAddition | default('-') }}</td>
+                    </tr>
+                    {% for key, value in repair.customFields if value is not null %}
+                        <tr>
+                            <td colspan="3"><strong>{{ key }}</strong> {{ value | default('-') }}</td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="row" style="font-size: 12px; margin-top: 10px">
+        <div class="col-md-12">
+            W celu sprawdzenia statusu naprawy zapaszamy na stronę: <b>{{ repair.companyPokwitowanieSite }}</b><br>
+            Login: <b style="font-size: 14px;">{{ repair.clientUsername }}</b><br>
+            {% if not repair.clientTempPwChanged %}
+                Hasło: <b style="font-size: 14px;">{{ repair.clientTempPw }}</b>
+            {% endif %}
+            <br>
+        </div>
+    </div>
+    <div class="row" style="font-size: 12px">
+        <div class="col-md-12">
+            Regulamin:
+            <div id="regulamin" style="font-size: 9px; text-align: justify">
+                {% for entry in regulations %}
+                    <p><strong>{{ loop.index }}. </strong>{{ entry.paragraph }}</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <div class="row" style="font-size: 12px; margin-top: 10px">
+        <div class="col-md-12">
+            <div class="pull-right text-right">
+                <br><br><br>
+                ___________________________<br>
+                <span style="font-size: 9px;">Pieczęć i podpis serwisanta</span>
+            </div>
+            <div>
+                Oświadczam, że zapoznałem/am się z treścią regulaminu orazwyrażam zgodę<br>
+                na przesyłanie drogą elektroniczną informacji dotyczących statusu naprawy.<br><br>
+                ___________________________<br>
+                <span style="font-size: 9px;">Podpis klienta</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            $('.wrap').css('padding-top', '0');
+            $('.print-it').css('margin-top', '50px');
+        });
+    </script>
+{% endblock %}

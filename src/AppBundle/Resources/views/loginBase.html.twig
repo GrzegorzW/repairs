@@ -1,0 +1,33 @@
+<!DOCTYPE HTML>
+<html lang="pl">
+<head>
+    <link rel="shortcut icon" href="{{ asset('favicon.ico') }}">
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <title>Pokwitowanie | {% block title %}{% endblock %}</title>
+
+    {% stylesheets filter='cssrewrite'
+    'bundles/app/css/bootstrap.min.css'
+    'bundles/app/css/style.css'
+    'bundles/app/css/sweetalert.css' %}
+    <link rel="stylesheet" href="{{ asset_url }}"/>
+    {% endstylesheets %}
+
+    {% javascripts
+    'bundles/app/js/jquery-2.1.4.min.js'
+    'bundles/app/js/bootstrap.min.js'
+    'bundles/app/js/sweetalert.min.js' %}
+    <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+
+</head>
+<body>
+<div class="container" style="padding-top: 150px; max-width: 300px;">
+    {% image 'bundles/app/images/logo1.jpg' %}
+    <a href="/"><img src="{{ asset_url }}" style="padding-bottom: 40px;"/></a>
+    {% endimage %}
+
+    {% block pageContainer %}{% endblock %}
+</div>
+</body>
+</html>

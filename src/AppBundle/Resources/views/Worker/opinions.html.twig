@@ -1,0 +1,48 @@
+{% extends 'AppBundle::base.html.twig' %}
+
+{% block title %}
+    | Opinie
+{% endblock %}
+
+{% block pageContainer %}
+
+    <div style="margin-top: 40px; margin-bottom: 15px;">
+        {% include 'AppBundle:PaginationLimit:paginationLimit.html.twig' %}
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered" id="convertable-table">
+            <thead>
+            <tr>
+                <th>Repair ID</th>
+                <th>User ID</th>
+                <th>Marka i model</th>
+                <th>Opinia</th>
+                <th>Data opinii</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for entry in pagination %}
+                <tr>
+                    <td data-title="Repair ID">
+                        <a href="{{ path('worker_panel_repair_details',{'id':entry.id}) }}">{{ entry.altId }}</a>
+                    </td>
+                    <td data-title="User ID">
+                        <a href="{{ path('worker_panel_user_details',{'id':entry.user.id}) }}">{{ entry.user.altId }}</a>
+                    </td>
+                    <td data-title="Marka i model">{{ entry.device.brand }} {{ entry.device.model }}</td>
+                    <td data-title="Opinia">{{ entry.opinion | raw }}</td>
+                    <td data-title="Data opinii">{{ entry.opinionDate | date('d.m.Y') }}</td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td data-title="Opinie" colspan="5">Brak opinii.</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="navigation text-center">
+        {{ knp_pagination_render(pagination) }}
+    </div>
+{% endblock %}

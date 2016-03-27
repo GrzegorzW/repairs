@@ -1,0 +1,29 @@
+{% extends "AppBundle:Emails:base.html.twig" %}
+
+{% block messageContainer %}
+
+    naprawa {{ repair.device.brand }} {{ repair.device.model }} (ID: {{ repair.device.altId }}) została wyceniona na: {{ totalRepairPricing.totalPrice | money_format }}<br>
+    <ul>
+        {% for description in totalRepairPricing.descriptions %}
+            <li>
+                {{ description }}
+            </li>
+        {% endfor %}
+    </ul>
+    Prosimy o akceptację on-line lub telefoniczną.<br><br>
+
+    <a href="{{ url('api_accept_total_repair_pricing_using_emailtotal_repair_pricing_acceptation_using_email',
+        {'pricing': totalRepairPricing.id,
+            'responseMethod': constant('AppBundle\\Entity\\TotalRepairPricingResponseMethod::TYPE_EMAIL'),
+            'hash': repair_service.generateTotalRepairPricingHash(totalRepairPricing.repair.user, totalRepairPricing)}) }}
+            ">
+        <img src="{{ absolute_url(asset('bundles/app/images/pricing-accept.png')) }}" alt="Akceptuję wycenę"/>
+    </a>
+
+    {% if additionalMessage is not null %}
+        <br><br>
+        Wiadomość od serwisanta:<br>
+        {{ additionalMessage }}
+    {% endif %}
+
+{% endblock %}

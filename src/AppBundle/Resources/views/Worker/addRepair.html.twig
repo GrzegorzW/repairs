@@ -1,0 +1,109 @@
+{% extends 'AppBundle::base.html.twig' %}
+
+{% block title %}
+    | Nowe pokwitowanie | Dodaj naprawę
+{% endblock %}
+
+{% block pageContainer %}
+
+    {% include 'AppBundle::alerts.html.twig' %}
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    Klient
+                    <div class="pull-right">
+                        <a href="{{ path('worker_panel_user_details',{'id': device.user.id}) }}"
+                           class="btn btn-xs btn-success">
+                            Popraw
+                        </a>
+                    </div>
+                </div>
+                <ul class="list-group">
+                    <li class="list-group-item"><strong>ID:</strong> {{ device.user.altId }}</li>
+                    <li class="list-group-item"><strong>Imię i
+                            nazwisko:</strong> {{ device.user.name }} {{ device.user.surname }}</li>
+                    <li class="list-group-item"><strong>Tel:</strong> {{ phone_number_format(device.user.tel) }}</li>
+                    <li class="list-group-item"><strong>E-mail:</strong>
+                        {{ device.user.email|default('-') }}
+                    </li>
+                    <li class="list-group-item"><strong>Zgoda marketingowa:</strong>
+                        {% if device.user.marketingAgreement %}
+                            Tak
+                        {% else %}
+                            Nie
+                        {% endif %}
+                    </li>
+                    <li class="list-group-item">
+                        <button type="button" class="btn btn-info btn-sm btn-block user-invoice-data">
+                            Dane do faktury
+                            <span class="glyphicon glyphicon-triangle-bottom pull-right"
+                                  style="margin-top: 2px;"></span>
+                        </button>
+                    </li>
+                    <li class="list-group-item user-invoice-data-body">
+                        <strong>Nazwa firmy:</strong> {{ device.user.clientCompanyName|default('-') }}
+                    </li>
+                    <li class="list-group-item user-invoice-data-body">
+                        <strong>Adres:</strong> {{ device.user.clientCompanyAddress|default('-') }}
+                    </li>
+                    <li class="list-group-item user-invoice-data-body">
+                        <strong>Kod pocztowy:</strong> {{ device.user.clientCompanyPostCode|default('-') }}
+                    </li>
+                    <li class="list-group-item user-invoice-data-body">
+                        <strong>Miasto:</strong> {{ device.user.clientCompanyCity|default('-') }}
+                    </li>
+                    <li class="list-group-item user-invoice-data-body">
+                        <strong>NIP:</strong> {{ device.user.clientCompanyNIP|default('-') }}
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    Urządzenie
+                    <div class="pull-right">
+                        <a href="{{ path('worker_panel_pokwitowanie_add_device',{'id': device.user.id}) }}"
+                           class="btn btn-xs btn-success">
+                            Inne urządzenie
+                        </a>
+                    </div>
+                </div>
+                <ul class="list-group">
+                    <li class="list-group-item"><strong>Typ:</strong> {{ device.deviceType.name }}</li>
+                    <li class="list-group-item"><strong>Marka</strong> {{ device.brand }}</li>
+                    <li class="list-group-item"><strong>Model:</strong> {{ device.model }}</li>
+                    <li class="list-group-item"><strong>Numer seryjny:</strong> {{ device.serial }}</li>
+                    {% for field in device.customFields %}
+                        <li class="list-group-item"><strong>{{ field.customFieldTemplate.name }}
+                                :</strong> {{ device_manager.getCustomFieldValueName(field) | default('-') }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="panel panel-info">
+                <div class="panel-heading">Naprawa</div>
+                <div class="panel-body">
+                    {{ form_start(formRepair) }}
+                    {{ form_row(formRepair.description, { 'attr': {'autofocus': 'autofocus', 'class': 'input-sm'}, 'label': 'Opis usterki i uwagi' }) }}
+                    {{ form_row(formRepair.addition, { 'label': 'Dodatkowo', 'attr': {'class': 'input-sm'} }) }}
+                    {{ form_row(formRepair.payment_method, { 'label': 'Preferowana metoda płatności', 'attr': {'class': 'input-sm'} }) }}
+                    <input type="submit" class="btn btn-success btn-sm pull-right" value="Utwórz naprawę">
+                    {{ form_end(formRepair) }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            $('.user-invoice-data').click(function () {
+                $('.user-invoice-data-body').toggleClass("hidden");
+            });
+        })
+    </script>
+{% endblock %}
+

@@ -1,0 +1,16 @@
+{% extends "AppBundle:Emails:base.html.twig" %}
+
+{% block messageContainer %}
+
+    naprawa właśnie została zakończona, sprzęt jest gotowy do odbioru.<br><br>
+    Szczegóły:<br>
+    - marka i model: {{ repair.device.brand }} {{ repair.device.model }},<br>
+    - id naprawy: {{ repair.device.altId }},<br>
+    - opis usterki i uwagi: {{ repair.description }}<br><br>
+{#todo dodac ostaeczna kwote do zaplaty#}
+    {% if additionalMessage is not null %}
+        Wiadomość od serwisanta:<br>
+        {{ additionalMessage }}
+    {% endif %}
+
+{% endblock %}

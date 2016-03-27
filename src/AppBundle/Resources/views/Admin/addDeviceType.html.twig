@@ -1,0 +1,164 @@
+{% extends 'AppBundle::base.html.twig' %}
+
+{% block title %}
+    Dodaj typ naprawy
+{% endblock %}
+
+{% block pageContainer %}
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="panel panel-info">
+                <div class="panel-heading">Typ naprawy</div>
+                <form id="addDeviceType" novalidate>
+                    <div class="panel-body">
+                        <div class="form-group">
+                            <label for="deviceTypeName">Nazwa typu*</label>
+                            <input id="deviceTypeName" class="form-control" name="deviceTypeName"
+                                   required="required"
+                                   autofocus="autofocus">
+                        </div>
+                        <hr>
+                        <h4>Dodatkowe pola</h4>
+                        <hr>
+                        <div id="additionalModulesList"></div>
+
+                        <button type="button" class="btn btn-sm btn-primary" onclick="customFields.add();"><span
+                                    class="glyphicon glyphicon-plus"></span>Dodaj pole
+                        </button>
+
+                        <input type="submit" class="btn btn-sm btn-success pull-right" id="addSaleSubmit"
+                               value="Zatwierdź"/>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="http://ajax.microsoft.com/ajax/jquery.templates/beta1/jquery.tmpl.js"></script>
+    <script type="text/javascript">
+        var customFields = {
+            element: $('#additionalModulesList'),
+            items: [],
+            options: [],
+            bindEvents: function () {
+                customFields.element.find('select[name*="type"]').unbind('change');
+                customFields.element.find('select[name*="type"]').bind('change', function () {
+                    var fieldset = $(this).closest('fieldset');
+                    if ($(this).val() == 2) {
+                        fieldset.find('.form-options').show();
+                    } else {
+                        fieldset.find('.form-options').hide();
+                    }
+                });
+            },
+            update: function(){
+                $('[name*="inputs[index]"]').each(function(index, elem){
+                    var index = $(elem).closest('fieldset').index();
+                    var name = $(elem).attr('name');
+                    name = name.replace('index', index);
+                    $(elem).attr('name', name);
+                });
+            },
+            add: function () {
+                var index = customFields.items.length ? customFields.items[customFields.items.length - 1] + 1 : 0;
+                $.tmpl(customFields.templates.field, {index: index}).appendTo(customFields.element);
+                customFields.items.push(index);
+                customFields.bindEvents();
+            },
+            remove: function (index) {
+                var fieldset = $('#custom-fields-' + index);
+                fieldset.remove();
+                customFields.items.splice(customFields.items.indexOf(index), 1);
+            },
+            addOption: function (index) {
+                var fieldset = $('#custom-fields-' + index);
+                var options = fieldset.find('.form-options');
+                var optionIndex = customFields.options.length ? customFields.options[customFields.options.length - 1] + 1 : 0;
+                customFields.options.push(optionIndex);
+                $.tmpl(customFields.templates.option, {
+                    index: index,
+                    option: optionIndex
+                }).insertAfter(options.find('.form-group:last'));
+            },
+            removeOption: function (optionIndex) {
+                var option = $('.form-group[data-option="' + optionIndex + '"]');
+                option.remove();
+                customFields.options.splice(customFields.options.indexOf(optionIndex), 1);
+            },
+            templates: {
+                field: '<fieldset id="custom-fields-${index}">' +
+                '<div class="form-group">' +
+                '<label>Nazwa pola*</label>' +
+                '<div class="row">' +
+                '<div class="col-md-10">' +
+                '<input type="text" class="form-control" name="inputs[index][name]">' +
+                '</div>' +
+                '<div class="col-md-2 text-right">' +
+                '<button type="button" class="btn btn-danger" onclick="customFields.remove(${index});"><i class="glyphicon glyphicon-trash"></i> Usuń</button>' +
+                '</div>' +
+                '</div>' +
+                '</div>' +
+                '<div class="form-group">' +
+                '<div class="checkbox">' +
+                '<label>' +
+                '<input type="checkbox" name="inputs[index][required]" value="1">' +
+                'Wymagane?' +
+                '</label>' +
+                '</div>' +
+                '</div>' +
+                '<div class="form-group">' +
+                '<label>Typ pola</label>' +
+                '<select class="form-control" name="inputs[index][type]">' +
+                '<option value="1">Pole tekstowe</option>' +
+                '<option value="2">Pole wyboru</option>' +
+                '</select>' +
+                '</div>' +
+                '<hr>' +
+                '<div class="form-options" style="display:none;">' +
+                '<div class="form-group">' +
+                '<label>Wartość do wyboru*</label>' +
+                '<input type="text" class="form-control" placeholder="Wartość do wyboru" name="inputs[index][options][]">' +
+                '</div>' +
+                '<button type="button" class="btn btn-block btn-success" onclick="customFields.addOption(${index});"><span class="glyphicon glyphicon-plus"></span> Dodaj wartość</button>' +
+                '<hr>' +
+                '</div>' +
+                '</fieldset>',
+                option: '<div class="form-group" data-option="${option}" style="margin-top: 20px;">' +
+                '<label>Wartość do wyboru*</label>' +
+                '<div class="row">' +
+                '<div class="col-md-10">' +
+                '<input type="text" class="form-control" placeholder="Wartość do wyboru" name="inputs[index][options][]">' +
+                '</div>' +
+                '<div class="col-md-2 text-right">' +
+                '<button type="button" class="btn btn-sm btn-danger" onclick="customFields.removeOption(${option});"><i class="glyphicon glyphicon-trash"></i> Usuń</button>' +
+                '</div>' +
+                '</div>' +
+                '</div>'
+            }
+        };
+
+        $(document).ready(function () {
+            $('#addDeviceType').submit(function (e) {
+                e.preventDefault();
+
+                customFields.update();
+
+                $.ajax({
+                    type: 'POST',
+                    data: $('#addDeviceType').serialize(),
+                    url: '{{ path('api_add_device_typeadd_device_type') }}',
+                    success: function (data, status, xhr) {
+                        if (xhr.status == 204) {
+                            window.location.replace('{{ path('admin_management') }}');
+                        }
+                    },
+                    error: function () {
+                        swal("Wystąpiły błędy", 'Uzupełnij wymagane pola', "error")
+                    }
+                });
+            });
+        });
+    </script>
+
+{% endblock %}

@@ -1,0 +1,60 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+</head>
+<body>
+    Witamy,<br>
+    <br>
+    {% block messageContainer %}{% endblock %}<br>
+    <br>
+    <a href="{{ url('pokwitowanie_user_panel_details', {'id': repair.id}) }}" target="_blank">Status naprawy on-line</a><br>
+    <br>
+    Serdecznie pozdrawiamy.<br>
+    <br>
+    <hr/>
+    {% set company = app.user.localization.company %}
+    <table>
+        <tr>
+            <td valign="top" style="min-width: 130px;">
+                <strong>{{ company.name }}</strong><br>
+                ul. {{ repair.startLocalization.street }}<br>
+                {{ repair.startLocalization.postCode }} {{ repair.startLocalization.city }}<br>
+            </td>
+            <td valign="top" style="min-width: 140px;">
+                <strong>Godziny otwarcia</strong><br>
+                Poniedziałek – Piątek: {{ repair.startLocalization.monFriOpen }}<br>
+                {% if repair.startLocalization.satOpen is not empty %}Sobota: {{ repair.startLocalization.satOpen }}{% endif %}
+            </td>
+            <td valign="top" style="min-width: 110px;">
+                <strong>Telefon</strong><br>
+                {{ phone_number_format(repair.startLocalization.tel1) }}<br>
+                {% if repair.startLocalization.tel2 is not null %}
+                    {{ phone_number_format(repair.startLocalization.tel2) }}<br>
+                {% endif %}
+                {% if repair.startLocalization.tel3 is not null %}
+                    {{ phone_number_format(repair.startLocalization.tel3) }}<br>
+                {% endif %}
+            </td>
+            <td valign="top">
+                <strong>Email</strong><br>
+                {{ repair.startLocalization.emailFirst }}<br>
+                {{ repair.startLocalization.emailSecond }}
+            </td>
+        </tr>
+        <tr>
+            <td colspan="4" valign="top">
+                <a href="{{ company.mainSite }}" target="_blank">
+                    <img alt="{{ company.mainSite }}" style="max-height: 100px; max-width: 200px;" src="
+                    {% if app.user.localization.company.logoFile is not empty %}
+                        {{ app.request.getUriForPath(vich_uploader_asset(company, 'logoFile')) }}
+                    {% else %}
+                        {#{{ absolute_url(asset('bundles/app/images/mf-logo.png')) }}#}
+                        {{ absolute_url(asset('bundles/app/images/favicon.ico')) }}
+                    {% endif %}
+                    "/>
+                </a>
+            </td>
+        </tr>
+    </table>
+</body>

@@ -1,0 +1,161 @@
+{% extends "AppBundle::base.html.twig" %}
+
+{% block title %}
+    | Naprawy
+{% endblock %}
+
+{% block pageContainer %}
+
+    {% include 'AppBundle::alerts.html.twig' %}
+
+    <form method="get" name="findRepair">
+        <label class="control-label" for="findRepair_phrase">Szukana fraza</label>
+        <input type="text" placeholder="np. R_id, nick, marka, model, opis, tel, data (YYYY-MM-DD)."
+               class="form-control" name="findRepairPhrase" style="margin-bottom: 15px;" autofocus
+                {% if app.request.get('findRepairPhrase') is not empty %}
+                    value="{{ app.request.get('findRepairPhrase') }}"
+                {% endif %}
+        />
+
+        <label class="control-label" for="findRepairStatus">Status</label>
+        <select class="form-control" name="findRepairStatus" id="findRepairStatus" style="margin-bottom: 15px;">
+            <option value="{{ constant('AppBundle\\Entity\\Status::STATUS_ACTIVE_REPAIR') }}"
+                    {% if app.request.get('findRepairStatus') == constant('AppBundle\\Entity\\Status::STATUS_ACTIVE_REPAIR') %}
+                        selected
+                    {% endif %}
+            >
+                Aktywne
+            </option>
+            {% for status in statusesToSelect %}
+                <option value="{{ status.id }}"
+                        {% if app.request.get('findRepairStatus') == status.id %}
+                            selected
+                        {% endif %}
+                >
+                    {{ status.name }}
+                </option>
+            {% endfor %}
+            <option value="{{ constant('AppBundle\\Entity\\Status::STATUS_ALL_REPAIRS') }}"
+                    {% if app.request.get('findRepairStatus') == constant('AppBundle\\Entity\\Status::STATUS_ALL_REPAIRS') %}
+                        selected
+                    {% endif %}
+            >
+                Wszystkie
+            </option>
+        </select>
+
+        {% if repairersToSelect %}
+            <label class="control-label" for="findRepairRepairer">Naprawiający</label>
+            <select class="form-control" name="findRepairRepairer" id="findRepairRepairer">
+                <option value="{{ constant('AppBundle\\Entity\\User::ALL_REPAIRERS') }}"
+                        {% if app.request.get('findRepairRepairer') == constant('AppBundle\\Entity\\User::ALL_REPAIRERS') %}
+                            selected
+                        {% endif %}
+                >
+                    Wszyscy
+                </option>
+                {% for repairer in repairersToSelect %}
+                    <option value="{{ repairer.id }}"
+                            {% if app.request.get('findRepairRepairer') == repairer.id %}
+                                selected
+                            {% endif %}
+                    >
+                        {{ repairer.localization.name }} | {{ repairer.name }} {{ repairer.surname }}
+                    </option>
+                {% endfor %}
+            </select>
+        {% endif %}
+
+        <a href="{{ path(app.request.get('_route')) }}" class="btn btn-danger btn-sm"
+           style="margin-top: 15px;">Reset</a>
+        <button type="submit" name="find" class="btn btn-success btn-sm" style="margin-top: 15px;">Wyszukaj</button>
+    </form>
+
+    {% include 'AppBundle:PaginationLimit:paginationLimit.html.twig' %}
+
+    <div class="table-responsive" style="margin-top: 20px;">
+        <table class="table table-striped table-bordered" id="convertable-table">
+            <thead>
+            <tr>
+                <th>
+                    {{ knp_pagination_sortable(pagination, 'R_id', 'r.alt_id') }}
+                </th>
+                <th>
+                    {{ knp_pagination_sortable(pagination, 'Naprawiający ', 'current_repairer.localization.id') }}
+                </th>
+                <th>
+                    {{ knp_pagination_sortable(pagination, 'Marka', 'device.brand') }}
+                </th>
+                <th>
+                    {{ knp_pagination_sortable(pagination, 'Model', 'device.model') }}
+                </th>
+                <th>
+                    {{ knp_pagination_sortable(pagination, 'Opis', 'r.description') }}
+                </th>
+                <th>
+                    {{ knp_pagination_sortable(pagination, 'Tel', 'u.tel') }}
+                </th>
+                <th>
+                    {{ knp_pagination_sortable(pagination, 'Data przyjęcia', 'r.date') }}
+                </th>
+                <th>
+                    {{ knp_pagination_sortable(pagination, 'Status', 's.id') }}
+                </th>
+                <th>Szczegóły</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for entry in pagination %}
+                <tr>
+                    <td data-title="R_id">
+                        {{ entry.altId }}
+                    </td>
+                    <td data-title="Naprawiający">{{ entry.currentRepairer.localization.name }}
+                        | {{ entry.currentRepairer.surname }} {{ entry.currentRepairer.name }}</td>
+                    <td data-title="Marka">{{ entry.device.brand }}</td>
+                    <td data-title="Model">{{ entry.device.model }}</td>
+                    <td data-title="Opis">
+                        {{ entry.description[:50] }}
+                        {% if entry.description|length > 50 %}
+                            ...
+                        {% endif %}
+                    </td>
+                    <td data-title="Tel">
+                        {% if entry.user.tel is not null %}
+                            {{ phone_number_format(entry.user.tel) }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    <td data-title="Data przyjęcia">{{ entry.startDate | date('d.m.Y') }}</td>
+                    <td data-title="Status"
+                            {% if entry.currentStatus.id == constant('AppBundle\\Entity\\Status::STATUS_RETURNED') %}
+                                class="success"
+                            {% endif %}
+                    >
+                        {{ entry.currentStatus.name }}
+                    </td>
+                    <td data-title="Szczegóły">
+                        <a href="{{ path('worker_panel_repair_details',{'id':entry.id}) }}">
+                            Zobacz
+                        </a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="9" data-title="Naprawy">Brak rekordów do wyświetlenia.</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="text-center">
+        {{ knp_pagination_render(pagination) }}
+    </div>
+
+    <small class="help-block text-center">
+        Liczba wyników: {{ pagination.getTotalItemCount }}
+    </small>
+
+{% endblock %}

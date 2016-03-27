@@ -1,0 +1,7 @@
+{% extends "AppBundle:Emails:base.html.twig" %}
+
+{% block messageContainer %}
+
+    Wycena naprawy {{ repair.device.brand }} {{ repair.device.model }} (ID: {{ repair.device.altId }}) została zatwierdzona.<br>
+
+{% endblock %}

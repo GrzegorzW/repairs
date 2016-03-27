@@ -1,0 +1,22 @@
+<li {% if(app.request.get('_route') starts with 'worker_panel_repair') %} class="active"{% endif %}><a
+            href="{{ path('worker_panel_repairs') }}" title="Naprawy"> Naprawy</a></li>
+
+{% if is_granted('ROLE_PERMISSION_POKWITOWANIE_CREATE') %}
+    <li {% if(app.request.get('_route') starts with 'worker_panel_pokwitowanie') %} class="active"{% endif %}><a
+                href="{{ path('worker_panel_pokwitowanie_user_add') }}" title="Utwórz pokwitowanie"> Nowa
+            naprawa</a></li>
+{% endif %}
+
+<li {% if(app.request.get('_route') starts with 'worker_order') %} class="active"{% endif %}><a
+            href="{{ path('worker_orders') }}" title="Zamówienia"> Zamówienia</a></li>
+
+{% if is_granted('ROLE_PERMISSION_USER_SECTION') %}
+<li {% if(app.request.get('_route') starts with 'worker_panel_user') %} class="active"{% endif %}><a
+            href="{{ path('worker_panel_users') }}" title="Klienci"> Klienci</a></li>
+{% endif %}
+
+<li {% if(app.request.get('_route') starts with 'worker_panel_device') %} class="active"{% endif %}><a
+            href="{{ path('worker_panel_devices') }}" title="Urządzenia"> Urządzenia</a></li>
+
+<li {% if(app.request.get('_route') starts with 'worker_panel_opinion') %} class="active"{% endif %}><a
+            href="{{ path('worker_panel_opinions') }}" title="Opinie"> Opinie</a></li>

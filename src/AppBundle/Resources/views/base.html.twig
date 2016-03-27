@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="utf-8"/>
+    {#todo#}
+    <link rel="shortcut icon" href="{{ asset('bundles/app/images/favicon.ico') }}">
+    {#<link rel="shortcut icon" href="{{ asset('bundles/app/images/mf-small-logo.png') }}">#}
+    {#todo#}
+    {#{% if app.user.localization.company.smallLogoFile is not empty %}#}
+        {#{{ asset(vich_uploader_asset(app.user.localization.company, 'smallLogoFile')) }}#}
+    {#{% else %}#}
+        {#{{ asset('bundles/app/images/mf-small-logo.png') }}#}
+    {#{% endif %}#}
+    {#">#}
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <title>Pokwitowanie{% block title %}{% endblock %}</title>
+
+    {% stylesheets filter='cssrewrite'
+    'bundles/app/css/bootstrap.min.css'
+    'bundles/app/css/bootstrap-datepicker.min.css'
+    'bundles/app/css/bootstrap-toggle.min.css'
+    'bundles/app/css/style.css'
+    'bundles/app/css/sweetalert.css' %}
+    <link rel="stylesheet" href="{{ asset_url }}"/>
+    {% endstylesheets %}
+
+    {% javascripts
+    'bundles/app/js/jquery-2.1.4.min.js'
+    'bundles/app/js/bootstrap.min.js'
+    'bundles/app/js/bootstrap-datepicker.min.js'
+    'bundles/app/locales/bootstrap-datepicker.pl.min.js'
+    'bundles/app/js/bootstrap-toggle.min.js'
+    'bundles/app/js/sweetalert.min.js'
+    'bundles/app/js/jquery.formatter.min.js'
+    'bundles/app/js/inputmask.min.js'
+    'bundles/app/js/jquery.inputmask.min.js'
+    'bundles/app/js/inputmask.numeric.extensions.min.js'
+    'bundles/app/js/moment-with-locales.min.js'%}
+    <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+
+    <link href='http://fonts.googleapis.com/css?family=Lato&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+</head>
+<body>
+<nav class="navbar navbar-inverse navbar-fixed-top hidden-print">
+    <div class="container-fluid">
+        {#todo#}
+        {#<a class="navbar-brand" href="{{ company_service.company.mainSite }}">#}
+        <span class="navbar-brand">
+            {% image 'bundles/app/images/favicon.ico' %}
+            <img style="height: 40px; position: absolute; top: 5px; left: 5px;" src="{{ asset_url }}"/>
+            {% endimage %}
+
+            {#<img style="height: 40px; position: absolute; top: 5px; left: 5px;" src="#}
+            {#todo#}
+                    {#{% if app.user.localization.company.smallLogoFile is not empty %}#}
+                        {#{{ asset(vich_uploader_asset(app.user.localization.company, 'smallLogoFile')) }}#}
+                    {#{% else %}#}
+                        {#{{ asset('bundles/app/images/mf-small-logo.png') }}#}
+                    {#{% endif %}#}
+                    {#"/>#}
+
+        </span>
+
+        <div class="pull-right hamburger" onclick="showNav();">
+            <span class="glyphicon glyphicon-menu-hamburger"
+                  style="color: white; font-size: 30px; cursor: pointer;"></span>
+        </div>
+
+        <div class="pull-right large-viewport">
+            <span style="color: white; margin-right: 10px;">{{ app.user.name }} {{ app.user.surname }}</span>
+            <a href="{{ path('fos_user_security_logout') }}" class="btn btn-danger navbar-btn">Wyloguj</a>
+        </div>
+    </div>
+    <div class="mobile-nav">
+        <ul class="nav nav-sidebar mobile-nav-topbar">
+            {% if is_granted('ROLE_WORKER') %}
+                {% include 'AppBundle::navRepairer.html.twig' %}
+            {% endif %}
+
+            {% if is_granted('ROLE_SUPER_ADMIN') %}
+                {% include 'AppBundle::navAdmin.html.twig' %}
+            {% endif %}
+
+            {% if(app.request.get('_route') starts with 'pokwitowanie_user') %}
+                {% include 'AppBundle::navUser.html.twig' %}
+            {% endif %}
+
+            {% include 'AppBundle::navMobileNotifications.html.twig' %}
+
+            <li>
+                <a href="{{ path('fos_user_security_logout') }}">Wyloguj</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+<div class="wrap">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-2 sidebar hidden-print large-viewport">
+                <ul class="nav nav-sidebar">
+                    {% if is_granted('ROLE_WORKER') %}
+                        {% include 'AppBundle::navRepairer.html.twig' %}
+                    {% endif %}
+
+                    {% if is_granted('ROLE_SUPER_ADMIN') %}
+                        {% include 'AppBundle::navAdmin.html.twig' %}
+                    {% endif %}
+
+                    {% if(app.request.get('_route') starts with 'pokwitowanie_user') %}
+                        {% include 'AppBundle::navUser.html.twig' %}
+                    {% endif %}
+
+                    {% include 'AppBundle::navNotifications.html.twig' %}
+                </ul>
+            </div>
+            <div class="col-md-10 col-md-offset-2 moja-klasa-print">
+                <div class="content" style="margin-top: 20px;">
+                    {% block pageContainer %}{% endblock %}
+                </div>
+                <div class="small-viewport-margin-bottom"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function showNav() {
+        $('.mobile-nav').toggleClass('on');
+    }
+</script>
+
+</body>
+</html>

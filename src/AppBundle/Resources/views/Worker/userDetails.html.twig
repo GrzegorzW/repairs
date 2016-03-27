@@ -1,0 +1,221 @@
+{% extends 'AppBundle::base.html.twig' %}
+
+{% block title %}
+    | Klienci | Szczegóły
+{% endblock %}
+
+{% block pageContainer %}
+
+    {% include 'AppBundle::alerts.html.twig' %}
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    Dane osobowe
+                    <button type="button" class="btn btn-success btn-xs pull-right" data-toggle="modal"
+                            data-target="#myModal">
+                        Edytuj
+                    </button>
+                </div>
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        <strong>ID użytkownika:</strong> {{ user.altId }}
+                    </li>
+                    <li class="list-group-item">
+                        <strong>Imię i nazwisko:</strong> <span id="list-name">{{ user.name }}</span> <span
+                                id="list-surname">{{ user.surname }}</span>
+                    </li>
+                    <li class="list-group-item">
+                        <strong>E-mail:</strong> {{ user.email|default('-') }}
+                    </li>
+                    <li class="list-group-item">
+                        <strong>Zgoda marketingowa:</strong> {% if user.marketingAgreement %}Tak{% else %}Nie{% endif %}
+                    </li>
+                    <li class="list-group-item">
+                        <strong>Tel:</strong> {{ phone_number_format(user.tel) }}
+                    </li>
+                    <li class="list-group-item">
+                        <strong>Login:</strong> {{ user.username }}
+                    </li>
+                    <li class="list-group-item">
+                        <strong>Ostatnio
+                            zalogowany:</strong> {{ user.lastLogin | date('d.m.Y H:i:s')|default('Niezalogowany') }}
+                    </li>
+                    <li class="list-group-item">
+                        <strong>Tymczasowe
+                            hasło:</strong> {% if not user.tempPwChanged %}{{ user.tempPw|default('Klient zmienił hasło') }}{% else %}Klient zmienił hasło{% endif %}
+                    </li>
+                    <li class="list-group-item">
+                        <button type="button" class="btn btn-info btn-sm btn-block user-invoice-data">
+                            Dane do faktury
+                            <span class="glyphicon glyphicon-triangle-bottom pull-right"
+                                  style="margin-top: 2px;"></span>
+                        </button>
+                    </li>
+                </ul>
+                <ul class="list-group">
+                    <li class="list-group-item user-invoice-data-body hidden">
+                        <strong>Nazwa firmy:</strong> {{ user.clientCompanyName|default('-') }}
+                    </li>
+                    <li class="list-group-item user-invoice-data-body hidden">
+                        <strong>Adres:</strong> {{ user.clientCompanyAddress|default('-') }}
+                    </li>
+                    <li class="list-group-item user-invoice-data-body hidden">
+                        <strong>Kod pocztowy:</strong> {{ user.clientCompanyPostCode|default('-') }}
+                    </li>
+                    <li class="list-group-item user-invoice-data-body hidden">
+                        <strong>Miasto:</strong> {{ user.clientCompanyCity|default('-') }}
+                    </li>
+                    <li class="list-group-item user-invoice-data-body hidden">
+                        <strong>NIP:</strong> {{ user.clientCompanyNIP|default('-') }}
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    Urządzenia i naprawy
+                    <a href="{{ path('worker_panel_pokwitowanie_add_device',{'id':user.id}) }}"
+                       class="btn btn-success btn-xs pull-right">
+                        Dodaj nową naprawę
+                    </a>
+                </div>
+                <ul class="list-group">
+                    {% for device in user.devices %}
+                        <li class="list-group-item" style="cursor:pointer;"
+                            onclick="bigFatObject.showDeviceRepairList({{ device.id }})">
+                            <span class="glyphicon glyphicon-triangle-bottom"
+                                  style="margin-top: 3px; margin-right: 5px;"></span>
+                            <strong>{{ device.brand }} {{ device.model }} {{ device.serial }}</strong>
+
+                            <a class="pull-right" href="{{ path('worker_panel_device_details',{'id': device.id}) }}">
+                                Szczegóły urządzenia
+                            </a>
+                        </li>
+                        {% if device.repairs %}
+                            <div class="table-responsive {% if not loop.first %}hidden{% endif %}" style="border-top: none"
+                                 id="device-repair-list-{{ device.id }}">
+                                <table class="table table-striped table-condensed" id="convertable-table"
+                                       style="margin-bottom: 10px;">
+                                    <tbody>
+                                    {% for repair in device.repairs %}
+                                        <tr>
+                                            <td data-title="Data rozpoczęcia">{{ repair.startDate| date('d.m.Y') }}</td>
+                                            <td data-title="Status">
+                                                {{ repair.currentStatus.name }}
+                                                {% if repair.endDate is not empty %}
+                                                    ({{ repair.endDate| date('d.m.Y') }})
+                                                {% endif %}
+                                            </td>
+                                            <td data-title="Opis">{{ repair.description }}</td>
+                                            <td data-title="Szczegóły">
+                                                <a href="{{ path('worker_panel_repair_details',{'id':repair.id}) }}">
+                                                    Szczegóły naprawy
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    {% else %}
+                                        <tr>
+                                            <td data-title="Naprawy" colspan="4"><span>Brak napraw</span></td>
+                                        </tr>
+                                    {% endfor %}
+                                    <tr>
+                                        <td data-title="Napraw urządzenie" colspan="4" style="background-color: white">
+                                            <a href="{{ path('worker_panel_pokwitowanie_add_repair', {'device': device.id}) }}" class="btn btn-success btn-xs pull-right">
+                                                Napraw to urządzenie
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        <li class="list-group-item">Brak urządzeń</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel">
+                        Edycja
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    {{ form_start(formEditUser, {'attr': {'class': ''}}) }}
+                    <div class="input-wrap">
+                        {{ form_row(formEditUser.name, {'attr': {'class': 'input-sm'}}) }}
+                        {{ form_row(formEditUser.surname, {'attr': {'class': 'input-sm'}}) }}
+                        {{ form_row(formEditUser.tel, {'attr': {'class': 'input-sm'}}) }}
+                        {{ form_row(formEditUser.email, {'attr': {'class': 'input-sm'}}) }}
+                        {{ form_widget(formEditUser.marketing_agreement, {'attr': {'style': 'position: relative'}}) }}
+                        <hr>
+                        {{ form_row(formEditUser.client_company_name, {'attr': {'class': 'input-sm'}}) }}
+                        {{ form_row(formEditUser.client_company_address, {'attr': {'class': 'input-sm'}}) }}
+                        {{ form_row(formEditUser.client_company_post_code, {'attr': {'class': 'input-sm'}}) }}
+                        {{ form_row(formEditUser.client_company_city, {'attr': {'class': 'input-sm'}}) }}
+                        {{ form_row(formEditUser.client_company_NIP, {'attr': {'class': 'input-sm'}}) }}
+                    </div>
+                    {{ form_row(formEditUser.save, {'label': 'Zatwierdź', 'attr': {'class': 'btn btn-success btn-sm pull-right'}}) }}
+
+                    <div class="clearfix"></div>
+                    {{ form_end(formEditUser) }}
+                    <hr>
+                    {{ form_start(formResetPassword, {'attr': {'class': ''}}) }}
+                    <div class="input-wrap">
+                        <label for="tempPw">Tymczasowe hasło</label>
+                        <input id="tempPw" class="input-sm form-control"
+                               value="{% if not user.tempPwChanged %} {{ user.tempPw }} {% else %} Klient zmienił hasło {% endif %}"
+                               disabled>
+                    </div>
+                    {{ form_widget(formResetPassword.reset, {'attr': {'class': 'btn btn-danger btn-sm'}}) }}
+                    <div class="clearfix"></div>
+                    {{ form_end(formResetPassword) }}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Anuluj</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var bigFatObject = {
+            showDeviceRepairList: function (index) {
+                $('#device-repair-list-' + index).toggleClass('hidden')
+            }
+        };
+
+        {% if not formEditUser.vars.valid %}
+        $('#myModal').modal('show');
+        {% endif %}
+
+        $('.user-invoice-data').click(function () {
+            $('.user-invoice-data-body').toggleClass("hidden");
+        });
+
+        $('#editUser_tel').formatter({
+            'pattern': '+{\{99\}\} \{\{9999999999}\}',
+            'persistent': true
+        });
+
+        $('#editUser_client_company_post_code').formatter({
+            'pattern': '{\{99\}\}-\{\{999}\}'
+        });
+
+        $('#resetPasswordType_reset').click(function () {
+            $("[name='resetPasswordType']").submit();
+        });
+    </script>
+
+{% endblock %}

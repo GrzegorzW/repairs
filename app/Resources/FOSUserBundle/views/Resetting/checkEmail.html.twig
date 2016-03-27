@@ -1,0 +1,15 @@
+{% extends "FOSUserBundle::layout.html.twig" %}
+
+{% trans_default_domain 'FOSUserBundle' %}
+
+{% block fos_user_content %}
+    <div>
+        <p>
+            {{ 'resetting.check_email'|trans({'%email%': email}) }}
+        </p>
+
+        <div>
+            <a href="{{ path('fos_user_security_login') }}" class="btn btn-lg btn-primary">Powrót do strony głównej</a>
+        </div>
+    </div>
+{% endblock %}

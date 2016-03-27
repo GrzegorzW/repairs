@@ -1,0 +1,371 @@
+<?xml version="1.0"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+    <file source-language="en" datatype="plaintext" original="file.ext">
+        <body>
+            <trans-unit id="1">
+                <source>test</source>
+                <target>alias do testu</target>
+            </trans-unit>
+            <trans-unit id="2">
+                <source>emailLeaveOpinionSubject</source>
+                <target>Zaproszenie do wyrażenia opinii.</target>
+            </trans-unit>
+            <trans-unit id="3">
+                <source>emailRepairSubject</source>
+                <target>Wiadomość dotycząca naprawy.</target>
+            </trans-unit>
+            <trans-unit id="4">
+                <source>emailBeginSubject</source>
+                <target>Potwierdzenie rozpoczęcia naprawy.</target>
+            </trans-unit>
+            <trans-unit id="5">
+                <source>flashLeaveOpinionInvitation</source>
+                <target>Wiadomość e-mail zachęcająca do wyrażenia opinii została wysłana.</target>
+            </trans-unit>
+            <trans-unit id="6">
+                <source>flashChangesConfirmation</source>
+                <target>Zmiany zostały wprowadzone.</target>
+            </trans-unit>
+            <trans-unit id="7">
+                <source>flashMessageAdded</source>
+                <target>Wiadomość została dodana.</target>
+            </trans-unit>
+            <trans-unit id="8">
+                <source>flashEmailSended</source>
+                <target>Wiadomość e-mail została wysłana.</target>
+            </trans-unit>
+            <trans-unit id="9">
+                <source>flashUserAdded</source>
+                <target>Dodawanie użytkownika zakończone powodzeniem.</target>
+            </trans-unit>
+            <trans-unit id="10">
+                <source>flashCantFindUser</source>
+                <target>Nie znaleziono użytkownika, któremu chcesz przypisać naprawę.</target>
+            </trans-unit>
+            <trans-unit id="11">
+                <source>flashRepairAdded</source>
+                <target>Naprawa została dodana.</target>
+            </trans-unit>
+            <trans-unit id="12">
+                <source>flashRegistrationConfirmation</source>
+                <target>Wiadomość porwierdzająca rejestrację naprawy została wysłana.</target>
+            </trans-unit>
+            <trans-unit id="13">
+                <source>flashTelChanged</source>
+                <target>Numer telefonu został zmieniony.</target>
+            </trans-unit>
+            <trans-unit id="14">
+                <source>flashPasswordReset</source>
+                <target>Hasło zostało zresetowane.</target>
+            </trans-unit>
+            <trans-unit id="15">
+                <source>flashRepairerAdded</source>
+                <target>Nowy pracownik został dodany.</target>
+            </trans-unit>
+            <trans-unit id="16">
+                <source>flashUsernameOrEmailIsOccupied</source>
+                <target>Użytkownik o tym loginie lub adresie e-mail już istnieje.</target>
+            </trans-unit>
+            <trans-unit id="17">
+                <source>flashPermissionDenied</source>
+                <target>Brak uprawnień do wyświetlenia.</target>
+            </trans-unit>
+            <trans-unit id="18">
+                <source>flashNoRepair</source>
+                <target>Brak naprawy.</target>
+            </trans-unit>
+            <trans-unit id="19">
+                <source>flashNoOpinionPossibility</source>
+                <target>Brak możliwości dodania opinii.</target>
+            </trans-unit>
+            <trans-unit id="20">
+                <source>flashOpinionAdded</source>
+                <target>Twoja opinia została dodana.</target>
+            </trans-unit>
+            <trans-unit id="21">
+                <source>flashEmailOccupied</source>
+                <target>Podany adres e-mail jest już zajęty.</target>
+            </trans-unit>
+            <trans-unit id="22">
+                <source>flashNoRepairId</source>
+                <target>Nie ma naprawy id =</target>
+            </trans-unit>
+            <trans-unit id="23">
+                <source>flashNoParagraph</source>
+                <target>Nie ma takiego punktu regulaminu.</target>
+            </trans-unit>
+            <trans-unit id="24">
+                <source>flashNoUser</source>
+                <target>Nie ma użytkownika id =</target>
+            </trans-unit>
+            <trans-unit id="25">
+                <source>flashPermissionsRemoved</source>
+                <target>Uprawnienia zostały usunięte.</target>
+            </trans-unit>
+            <trans-unit id="26">
+                <source>flashEmailAlreadyTaken</source>
+                <target>Użytkownik o takim adresie e-mail już istnieje. Wprowadź użytkownika z bazy danych.</target>
+            </trans-unit>
+            <trans-unit id="27">
+                <source>flashDatabaseTransactionError</source>
+                <target>Podczas zapisu wystąpił błąd - zmiany nie zostały wprowadzone.</target>
+            </trans-unit>
+            <trans-unit id="28">
+                <source>emailWaitingForAcceptation</source>
+                <target>Prośba o akceptację wyceny.</target>
+            </trans-unit>
+            <trans-unit id="29">
+                <source>emailReparation</source>
+                <target>Sprzęt w trakcie naprawy.</target>
+            </trans-unit>
+            <trans-unit id="30">
+                <source>emailResignation</source>
+                <target>Rezygnacja z naprawy.</target>
+            </trans-unit>
+            <trans-unit id="31">
+                <source>emailReady</source>
+                <target>Sprzęt gotowy do odbioru.</target>
+            </trans-unit>
+            <trans-unit id="32">
+                <source>emailWaitingForDiagnosis</source>
+                <target>Sprzęt oczekuje na diagnozę.</target>
+            </trans-unit>
+            <trans-unit id="33">
+                <source>flashLocalizationAdded</source>
+                <target>Oddział został dodany.</target>
+            </trans-unit>
+            <trans-unit id="34">
+                <source>flashParagraphAdded</source>
+                <target>Punkt regulaminu został dodany.</target>
+            </trans-unit>
+            <trans-unit id="35">
+                <source>flashParagraphDeleted</source>
+                <target>Punkt regulaminu został usunięty.</target>
+            </trans-unit>
+            <trans-unit id="36">
+                <source>flashEntryAdded</source>
+                <target>Wpis został dodany.</target>
+            </trans-unit>
+            <trans-unit id="37">
+                <source>flashEntryEdited</source>
+                <target>Wpis został zmieniony.</target>
+            </trans-unit>
+            <trans-unit id="38">
+                <source>flashRepairerEdited</source>
+                <target>Dane pracownika zostały zmienione.</target>
+            </trans-unit>
+            <trans-unit id="39">
+                <source>flashLocalizationEdited</source>
+                <target>Dane lokalizacji zostały zmienione.</target>
+            </trans-unit>
+            <trans-unit id="40">
+                <source>flashEmployeeFired</source>
+                <target>Pracownik został zwolniony.</target>
+            </trans-unit>
+            <trans-unit id="41">
+                <source>flashSaleAdded</source>
+                <target>Dodano do sprzedanych.</target>
+            </trans-unit>
+            <trans-unit id="42">
+                <source>flashSaleKindAdded</source>
+                <target>Dodano typ sprzedaży.</target>
+            </trans-unit>
+            <trans-unit id="43">
+                <source>emailNewRepairer</source>
+                <target>Witamy w zespole.</target>
+            </trans-unit>
+            <trans-unit id="44">
+                <source>emailWorkerAssignation</source>
+                <target>Przypisanie naprawy.</target>
+            </trans-unit>
+            <trans-unit id="45">
+                <source>flashSaleCostDeleted</source>
+                <target>Usunięto koszt sprzedaży.</target>
+            </trans-unit>
+            <trans-unit id="46">
+                <source>current_repairer</source>
+                <target>Naprawiający</target>
+            </trans-unit>
+            <trans-unit id="47">
+                <source>current_status</source>
+                <target>Status</target>
+            </trans-unit>
+            <trans-unit id="48">
+                <source>create</source>
+                <target>Utworzono</target>
+            </trans-unit>
+            <trans-unit id="49">
+                <source>update</source>
+                <target>Zmieniono</target>
+            </trans-unit>
+            <trans-unit id="50">
+                <source>delete</source>
+                <target>Usunięto</target>
+            </trans-unit>
+            <trans-unit id="51">
+                <source>description</source>
+                <target>Opis</target>
+            </trans-unit>
+            <trans-unit id="52">
+                <source>priceAmount</source>
+                <target>Wartość [w gr]</target>
+            </trans-unit>
+            <trans-unit id="53">
+                <source>priceCurrency</source>
+                <target>Waluta</target>
+            </trans-unit>
+            <trans-unit id="54">
+                <source>cost_kind</source>
+                <target>Typ</target>
+            </trans-unit>
+            <trans-unit id="55">
+                <source>name</source>
+                <target>Nazwa</target>
+            </trans-unit>
+            <trans-unit id="56">
+                <source>totalPriceAmount</source>
+                <target>Ogólna wycena [gr]</target>
+            </trans-unit>
+            <trans-unit id="57">
+                <source>sale_kind</source>
+                <target>Typ</target>
+            </trans-unit>
+            <trans-unit id="58">
+                <source>totalPriceCurrency</source>
+                <target>Waluta</target>
+            </trans-unit>
+            <trans-unit id="59">
+                <source>flashRepairCostDeleted</source>
+                <target>Usunięto koszt serwisu.</target>
+            </trans-unit>
+            <trans-unit id="60">
+                <source>emailDiagnosing</source>
+                <target>Sprzęt w trakcie diagnozowania.</target>
+            </trans-unit>
+            <trans-unit id="61">
+                <source>localization</source>
+                <target>Lokalizacja</target>
+            </trans-unit>
+            <trans-unit id="62">
+                <source>flashUserDataChanged</source>
+                <target>Dane klienta zostały zmienione</target>
+            </trans-unit>
+            <trans-unit id="63">
+                <source>flashClientSideUserDataChanged</source>
+                <target>Twoje dane zostały zmienione</target>
+            </trans-unit>
+            <trans-unit id="64">
+                <source>acceptation.method.application</source>
+                <target>poprzez aplikację</target>
+            </trans-unit>
+            <trans-unit id="65">
+                <source>acceptation.method.email</source>
+                <target>emailowo</target>
+            </trans-unit>
+            <trans-unit id="66">
+                <source>acceptation.method.phone</source>
+                <target>telefonicznie</target>
+            </trans-unit>
+            <trans-unit id="67">
+                <source>acceptation.method.personally</source>
+                <target>osobiście</target>
+            </trans-unit>
+            <trans-unit id="68">
+                <source>emailRepairPricingAccepted</source>
+                <target>Potwierdzenie akceptacji wyceny.</target>
+            </trans-unit>
+            <trans-unit id="69">
+                <source>payment_method</source>
+                <target>Metoda płatności</target>
+            </trans-unit>
+            <trans-unit id="70">
+                <source>html.text</source>
+                <target>Pole tekstowe</target>
+            </trans-unit>
+            <trans-unit id="71">
+                <source>html.checkbox</source>
+                <target>Pole wielokrotnego wyboru</target>
+            </trans-unit>
+            <trans-unit id="72">
+                <source>html.radio</source>
+                <target>Pole jednokrotnego wyboru</target>
+            </trans-unit>
+            <trans-unit id="73">
+                <source>form.label.delete</source>
+                <target>Usuń</target>
+            </trans-unit>
+            <trans-unit id="74">
+                <source>company.name</source>
+                <target>Nazwa firmy</target>
+            </trans-unit>
+            <trans-unit id="75">
+                <source>company.street</source>
+                <target>Ulica</target>
+            </trans-unit>
+            <trans-unit id="76">
+                <source>company.city</source>
+                <target>Miasto</target>
+            </trans-unit>
+            <trans-unit id="77">
+                <source>company.post_code</source>
+                <target>Kod pocztowy</target>
+            </trans-unit>
+            <trans-unit id="78">
+                <source>company.nip</source>
+                <target>NIP</target>
+            </trans-unit>
+            <trans-unit id="79">
+                <source>company.main_site</source>
+                <target>Adres firmowej strony WWW</target>
+            </trans-unit>
+            <trans-unit id="80">
+                <source>company.mailing_subject_begin</source>
+                <target>Mailing - początek tematu, np.: [nazwa firmy]</target>
+            </trans-unit>
+            <trans-unit id="81">
+                <source>company.small_logo</source>
+                <target>Miniaturka</target>
+            </trans-unit>
+            <trans-unit id="82">
+                <source>company.logo</source>
+                <target>Logotyp</target>
+            </trans-unit>
+            <trans-unit id="83">
+                <source>ROLE_PERMISSION_PUBLIC_MESSAGES</source>
+                <target>Wysyłanie wiadomości do klienta</target>
+            </trans-unit>
+            <trans-unit id="84">
+                <source>ROLE_PERMISSION_POKWITOWANIE_CREATE</source>
+                <target>Dodawanie naprawy</target>
+            </trans-unit>
+            <trans-unit id="85">
+                <source>ROLE_PERMISSION_SALE_CREATE</source>
+                <target>Dodawanie do sprzedanych</target>
+            </trans-unit>
+            <trans-unit id="86">
+                <source>ROLE_PERMISSION_USER_SECTION</source>
+                <target>Dostęp do szczegółowych danych klienta</target>
+            </trans-unit>
+            <trans-unit id="87">
+                <source>ROLE_PERMISSION_CHANGE_REPAIRER</source>
+                <target>Zmiany naprawiającego</target>
+            </trans-unit>
+            <trans-unit id="88">
+                <source>ROLE_PERMISSION_LOCALIZATION_REPAIRS</source>
+                <target>Wyświetlanie napraw z własnej lokalizacji</target>
+            </trans-unit>
+            <trans-unit id="89">
+                <source>ROLE_PERMISSION_LOCALIZATION_DEVICES</source>
+                <target>Wyświetlanie urządzeń z własnej lokalizacji</target>
+            </trans-unit>
+            <trans-unit id="90">
+                <source>ROLE_PERMISSION_ALL_REPAIRS</source>
+                <target>Wyświetlanie wszystkich napraw</target>
+            </trans-unit>
+            <trans-unit id="91">
+                <source>ROLE_PERMISSION_ALL_DEVICES</source>
+                <target>Wyświetlanie wszystkich urządzeń</target>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

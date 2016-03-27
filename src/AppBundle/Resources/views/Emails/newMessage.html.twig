@@ -1,0 +1,10 @@
+{% extends "AppBundle:Emails:base.html.twig" %}
+
+{% block messageContainer %}
+
+    masz nową wiadomość dotyczącą naprawy: {{ repair.device.brand }} {{ repair.device.model }} (ID: {{ repair.device.altId }}).<br><br>
+    <a href="{{ url('pokwitowanie_user_panel_details', {'id': repair.id }) }}" target="_blank">Przeczytaj</a>
+
+{% endblock %}
+
+

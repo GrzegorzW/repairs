@@ -1,0 +1,137 @@
+{% extends 'AppBundle::base.html.twig' %}
+
+{% block title %}
+    | Pracownik
+{% endblock %}
+
+{% block pageContainer %}
+
+    {% include 'AppBundle::alerts.html.twig' %}
+
+    <ul class="nav nav-tabs">
+        <li class="active"><a data-toggle="tab" href="#home">Dane i uprawnienia</a></li>
+        <li><a data-toggle="tab" href="#menu1">Aktywne naprawy</a></li>
+    </ul>
+    <div class="tab-content">
+        <div id="home" class="tab-pane fade in active">
+            <div class="row" style="margin-top: 10px;">
+                <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-md-6">
+                            {{ form_start(formRepairer) }}
+                            {{ form_errors(formRepairer) }}
+                            {{ form_row(formRepairer.username) }}
+                            {{ form_row(formRepairer.name) }}
+                            {{ form_row(formRepairer.surname) }}
+                            {{ form_row(formRepairer.tel) }}
+                            {{ form_row(formRepairer.email) }}
+                            {% if not repairer.tempPwChanged %}
+                                <div class="form-group">
+                                    <label for="tempPw" class="control-label">Tymczasowe hasło</label>
+                                    <input id="tempPw" class="form-control" value="{{ repairer.tempPw }}" disabled>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            {% if formRepairer.roles is defined %}
+                                {{ form_row(formRepairer.roles) }}
+                            {% endif %}
+                        </div>
+                        <div class="col-md-12">
+                            <button type="button" class="btn btn-danger btn-sm" data-toggle="modal"
+                                    data-target="#myModal" style="margin-bottom: 10px;">
+                                Zwolnij pracownika
+                            </button>
+
+                            <div class="form-inline">
+                                <a href="{{ path('admin_management') }}" role="button"
+                                   class="btn btn-sm btn-default">
+                                    Powrót
+                                </a>
+
+                                <button type="submit" class="btn btn-success btn-sm">
+                                    Zmień
+                                </button>
+
+                                {{ form_end(formRepairer) }}
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="menu1" class="tab-pane fade">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="table-responsive" style="margin-top: 20px;">
+                        <table class="table table-hover">
+                            <thead>
+                            <tr>
+                                <th>Repair ID</th>
+                                <th>Marka i model</th>
+                                <th>Status</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for repair in activeRepairs %}
+                                <tr>
+                                    <td>
+                                        <a href="{{ path('worker_panel_repair_details',{'id':repair.id}) }}">
+                                            {{ repair.altId }}
+                                        </a>
+                                    </td>
+                                    <td>{{ repair.device.brand }} {{ repair.device.model }}</td>
+                                    <td>{{ repair.currentStatus.name }}</td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td>
+                                        Brak napraw.
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Zwolnij pracownika</h4>
+                </div>
+                <div class="modal-body">
+                    <h5>
+                        Czy na pewno chcesz zwolnić pracownika?
+                    </h5>
+
+                    <p>
+                        Naprawy pracownika zostaną przypisane do Twojego konta.
+                        Usuwanie pracownika jest procesem nieodwracalnym.
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <div class="form-inline">
+                        {{ form_start(formRemoveRepairer) }}
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Anuluj</button>
+                        {{ form_row(formRemoveRepairer.delete, {'attr': {'class': 'btn btn-danger'}}) }}
+                        {{ form_end(formRemoveRepairer) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $('#myModal').on('shown.bs.modal', function () {
+            $('#myInput').focus()
+        })
+    </script>
+
+{% endblock %}

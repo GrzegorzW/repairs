@@ -1,0 +1,73 @@
+{% extends 'AppBundle::base.html.twig' %}
+
+{% block title %}
+    | Edycja danych oddziału
+{% endblock %}
+
+{% block pageContainer %}
+
+    {% include 'AppBundle::alerts.html.twig' %}
+
+    <ul class="nav nav-tabs">
+        <li class="active"><a data-toggle="tab" href="#home">Oddział</a></li>
+    </ul>
+    <div class="tab-content">
+        <div id="home" style="padding-top: 10px;" class="tab-pane fade in active">
+            <div class="row">
+                <div class="col-md-6">
+                    {{ form_start(formLocalization) }}
+                    {{ form_row(formLocalization.name) }}
+                    {{ form_row(formLocalization.street) }}
+                    {{ form_row(formLocalization.city) }}
+                    {{ form_row(formLocalization.post_code) }}
+                    {{ form_row(formLocalization.tel_1) }}
+                    {{ form_row(formLocalization.tel_2) }}
+                    {{ form_row(formLocalization.tel_3) }}
+                    {{ form_row(formLocalization.email_first) }}
+                    {{ form_row(formLocalization.email_second) }}
+                    {{ form_row(formLocalization.mon_fri_open) }}
+                    {{ form_row(formLocalization.sat_open) }}
+                    <div class="form-inline" style="margin-bottom: 15px;">
+                        <a href="{{ path('admin_management') }}" role="button" class="btn btn-sm btn-default">
+                            Powrót
+                        </a>
+                        <input type="submit" value="Zatwierdź" class="btn btn-sm btn-success"/>
+                    </div>
+                    {{ form_end(formLocalization) }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $('#localization_post_code').formatter({
+            'pattern': '\{\{99\}\}-\{\{999\}\}',
+            'persistent': false
+        });
+
+        $('#localization_tel_1').formatter({
+            'pattern': '+{\{99\}\} \{\{9999999999}\}',
+            'persistent': false
+        });
+
+        $('#localization_tel_2').formatter({
+            'pattern': '+{\{99\}\} \{\{9999999999}\}',
+            'persistent': false
+        });
+
+        $('#localization_tel_3').formatter({
+            'pattern': '+{\{99\}\} \{\{9999999999}\}',
+            'persistent': false
+        });
+
+        $('#localization_mon_fri_open').formatter({
+            'pattern': '\{\{99\}\}:\{\{99\}\} - \{\{99\}\}:\{\{99\}\}',
+            'persistent': false
+        });
+
+        $('#localization_sat_open').formatter({
+            'pattern': '\{\{99\}\}:\{\{99\}\} - \{\{99\}\}:\{\{99\}\}',
+            'persistent': false
+        });
+    </script>
+{% endblock %}

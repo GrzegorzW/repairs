@@ -1,0 +1,22 @@
+{% if is_granted('ROLE_WORKER') %}
+    <li>
+        <div class="timeline-badge danger">
+            <i class="glyphicon glyphicon glyphicon-wrench timeline-glyphicon"></i>
+        </div>
+        <div class="timeline-panel">
+            <div class="timeline-heading">
+                <h4 class="timeline-title">
+                    Naprawiajacy: {{ entry.user.name }} {{ entry.user.surname }}
+                </h4>
+            <span>
+                <small class="text-muted">
+                    Dodane przez:
+                    {{ entry.author.name }} {{ entry.author.surname }},<br>
+                    {{ entry.created | date('d.m.Y H:i:s') }}
+                    {{ helper_service.daysVariety(entry.created) }}
+                </small>
+            </span>
+            </div>
+        </div>
+    </li>
+{% endif %}

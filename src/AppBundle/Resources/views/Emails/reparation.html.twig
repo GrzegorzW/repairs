@@ -1,0 +1,13 @@
+{% extends "AppBundle:Emails:base.html.twig" %}
+
+{% block messageContainer %}
+
+    Twój sprzęt: {{ repair.device.brand }} {{ repair.device.model }} (ID: {{ repair.device.altId }}) jest w trakcie naprawy.<br>
+    Skontaktujemy się z Tobą niezwłocznie po zakończeniu czynności serwisowych.<br>
+
+    {% if additionalMessage is not null %}
+        Wiadomość od serwisanta:<br>
+        {{ additionalMessage }}<br>
+    {% endif %}
+
+{% endblock %}

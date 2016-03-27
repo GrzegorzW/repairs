@@ -1,0 +1,90 @@
+{% extends 'AppBundle::base.html.twig' %}
+
+{% block title %}
+    | Urządzenie | Szczegóły
+{% endblock %}
+
+{% block pageContainer %}
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    Urządzenie
+                </div>
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        <strong>ID:</strong> {{ device.altId }}
+                    </li>
+                    <li class="list-group-item">
+                        <strong>Właściciel:</strong>
+                        <a href="{{ path('worker_panel_user_details', {'id': device.user.id}) }}">
+                            {{ device.user.name }} {{ device.user.surname }}
+                            {% if device.user.clientCompanyName is not empty %}
+                                ({{ device.user.clientCompanyName }})
+                            {% endif %}
+                        </a>
+                    </li>
+                    <li class="list-group-item">
+                        <strong>Marka i model:</strong> {{ device.brand }} {{ device.model }}
+                    </li>
+                    <li class="list-group-item">
+                        <strong>Numer seryjny:</strong> {{ device.serial }}
+                    </li>
+                    {% for field in device.customFields %}
+                        <li class="list-group-item">
+                            <strong>{{ field.customFieldTemplate.name }} :</strong>
+                            {{ device_manager.getCustomFieldValueName(field) }}
+                        </li>
+                    {% endfor %}
+                    <li class="list-group-item">
+                        <strong>Utworzono:</strong> {{ device.createdAt | date('d.m.Y H:i:s') }}
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    Naprawy
+                    <a type="button" class="btn btn-success btn-xs pull-right"
+                       href="{{ path('worker_panel_pokwitowanie_add_repair', {'device': device.id}) }}">
+                        Napraw to urządzenie
+                    </a>
+                </div>
+                {% if device.repairs %}
+                    <div class="table-responsive" style="border-top: none"
+                         id="device-repair-list-{{ device.id }}">
+                        <table class="table table-striped" id="convertable-table">
+                            <tbody>
+                            {% for repair in device.repairs %}
+                                <tr>
+                                    <td data-title="Data rozpoczęcia">{{ repair.startDate| date('d.m.Y') }}</td>
+                                    <td data-title="Status">
+                                        {{ repair.currentStatus.name }}
+                                        {% if repair.endDate is not empty %}
+                                            ({{ repair.endDate| date('d.m.Y') }})
+                                        {% endif %}
+                                    </td>
+                                    <td data-title="Opis">{{ repair.description }}</td>
+                                    <td data-title="Szczegóły">
+                                        <a href="{{ path('worker_panel_repair_details',{'id':repair.id}) }}">
+                                            Szczegóły naprawy
+                                        </a>
+                                    </td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td data-title="Naprawy" colspan="4"><span>Brak napraw</span></td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+

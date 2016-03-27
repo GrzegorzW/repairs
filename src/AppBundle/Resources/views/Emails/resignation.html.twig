@@ -1,0 +1,13 @@
+{% extends "AppBundle:Emails:base.html.twig" %}
+
+{% block messageContainer %}
+
+    Twój sprzęt: {{ repair.device.brand }} {{ repair.device.model }} (ID: {{ repair.device.altId }}) jest przygotowywany do wydania.<br>
+    Skontaktujemy się z Tobą ponownie gdy będzie gotowy do odbioru.<br><br>
+
+    {% if additionalMessage is not null %}
+        Wiadomość od serwisanta:<br>
+        {{ additionalMessage }}
+    {% endif %}
+
+{% endblock %}

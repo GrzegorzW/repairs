@@ -1,0 +1,11 @@
+{% block subject %} Resetowanie hasła {% endblock %}
+
+{% block body_html %}
+    {% embed "::emailBase.html.twig" %}
+        {% block messageContainer %}
+            {% autoescape false %}
+                Aby zresetować hasło - proszę przejść do {{ confirmationUrl }}
+            {% endautoescape %}
+        {% endblock %}
+    {% endembed %}
+{% endblock %}

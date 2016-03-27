@@ -1,0 +1,188 @@
+{% extends 'AppBundle::base.html.twig' %}
+
+{% block title %}
+    | Szczegóły naprawy
+{% endblock %}
+
+{% block pageContainer %}
+
+    {% include 'AppBundle::alerts.html.twig' %}
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="panel panel-info">
+                <div class="panel-heading">Sprzęt</div>
+                <ul class="list-group">
+                    <li class="list-group-item"><b>Marka i model:</b> {{ repair.device.brand }} {{ repair.device.model }}
+                    </li>
+                    <li class="list-group-item"><b>S/N:</b> {{ repair.device.serial }}</li>
+                    {% for field in repair.device.customFields %}
+                        <li class="list-group-item"><strong>{{ field.customFieldTemplate.name }}
+                                :</strong> {{ device_manager.getCustomFieldValueName(field) |default('-') }}</li>
+                    {% endfor %}
+                    <li class="list-group-item"><b>Dodatkowo:</b>
+                        {{ repair.addition|default('-') }}
+                    </li>
+                    <li class="list-group-item"><b>Opis usterki:</b> {{ repair.description }}</li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="panel panel-info">
+                <div class="panel-heading">Naprawa</div>
+                <ul class="list-group">
+                    <li class="list-group-item"><b>ID naprawy:</b> {{ repair.altId }}</li>
+                    <li class="list-group-item"><b>Data przyjęcia: </b> {{ repair.startDate | date('d.m.Y') }}</li>
+                    <li class="list-group-item"><b>Data zakończenia: </b>
+                        {% if repair.endDate is not null and repair.currentStatus.id != constant('AppBundle\\Entity\\Status::STATUS_RETURNED') %}
+                            {{ repair.endDate | date('Y-m-d H:i:s') }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </li>
+                    <li class="list-group-item">
+                        <b>Aktualny status:</b> {{ repair.currentStatus.name }}
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-info">
+                <div class="panel-heading">Timeline</div>
+                <div class="panel-body">
+                    <div id="messages">
+                        <ul class="timeline">
+                            {% if repair.opinion is not null %}
+                                {#----TIMELINE OPIONION BEGIN----#}
+                                <li class="timeline-fullwidth opinion">
+                                    <div class="timeline-panel">
+                                        <div class="timeline-heading">
+                                            <h4 class="timeline-title">Opinia:</h4>
+                                        </div>
+                                        <div class="timeline-body">
+                                            <p>
+                                                {{ repair.opinion | raw }}
+                                            </p>
+                                            <p>
+                                                <small class="text-muted">{{ repair.opinionDate | date('d.m.Y H:i:s') }}</small>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="timeline-badge warning"><i class="glyphicon glyphicon-edit timeline-glyphicon"></i>
+                                    </div>
+                                </li>
+                                {#----TIMELINE OPIONION END----#}
+                            {% endif %}
+                            {% if repair.currentStatus.id == constant('AppBundle\\Entity\\Status::STATUS_RETURNED') and repair.opinion is null %}
+                                {#----ADD OPINION START----#}
+                                <li class="timeline-inverted">
+                                    <div class="timeline-badge warning">
+                                        <i class="glyphicon glyphicon-plus timeline-glyphicon"></i>
+                                    </div>
+                                    <div class="timeline-panel read">
+                                        <div class="timeline-heading">
+                                            <h4 class="timeline-title">
+                                                Twoja opinia:
+                                            </h4>
+                                        </div>
+                                        <div class="timeline-body">
+                                            {{ form_start(formOpinion) }}
+                                            <div class="form-group{% if form_errors(formOpinion.opinion) %} has-error {% endif %}">
+                                                {{ form_widget(formOpinion.opinion) }}
+                                            </div>
+                                            <div class="col-md-10 has-error">
+                                                {{ form_errors(formOpinion.opinion) }}
+                                            </div>
+                                            <div class="form-group col-md-2">
+                                                {{ form_widget(formOpinion.send, {'attr': {'class': 'btn-success pull-right'}}) }}
+                                            </div>
+                                            {{ form_end(formOpinion) }}
+                                        </div>
+                                    </div>
+                                </li>
+                                {#----ADD OPINION STOP----#}
+                            {% endif %}
+                            {% if repair.currentStatus.id != constant('AppBundle\\Entity\\Status::STATUS_RETURNED') %}
+                                {#----MESSAGE START----#}
+                                <li class="timeline-inverted">
+                                    <div class="timeline-badge info">
+                                        <i class="glyphicon glyphicon-plus timeline-glyphicon"></i>
+                                    </div>
+                                    <div class="timeline-panel read">
+                                        <div class="timeline-heading">
+                                            <h4 class="timeline-title">
+                                                Nowa wiadomość:
+                                            </h4>
+                                        </div>
+                                        <div class="timeline-body">
+                                            {{ form_start(formNewUserMessage) }}
+                                            <div class="form-group{% if form_errors(formNewUserMessage.content) %} has-error {% endif %}">
+                                                {{ form_widget(formNewUserMessage.content) }}
+                                            </div>
+                                            <div class="col-md-10 has-error">
+                                                {{ form_errors(formNewUserMessage.content) }}
+                                            </div>
+                                            <div class="form-group col-md-2">
+                                                {{ form_widget(formNewUserMessage.send, {'attr': {'class': 'btn-success pull-right'}}) }}
+                                            </div>
+                                            {{ form_end(formNewUserMessage) }}
+                                        </div>
+                                    </div>
+                                </li>
+                                {#----MESSAGE STOP----#}
+                            {% endif %}
+                            {% for entry in timeline %}
+                                {% for entry in timeline %}
+                                    {% if helper_service.instanceOf(entry, 'AppBundle\\Entity\\Message') %}
+                                        {% include 'AppBundle:Timeline:message.html.twig' %}
+                                    {% elseif helper_service.instanceOf(entry, 'AppBundle\\Entity\\RepairersHistory') %}
+                                        {% include 'AppBundle:Timeline:repairersHistory.html.twig' %}
+                                    {% elseif helper_service.instanceOf(entry, 'AppBundle\\Entity\\RepairStatus') %}
+                                        {% include 'AppBundle:Timeline:repairStatus.html.twig' %}
+                                    {% elseif helper_service.instanceOf(entry, 'AppBundle\\Entity\\TotalRepairPricing') %}
+                                        {% include 'AppBundle:Timeline:totalPricingRequest.html.twig' %}
+                                    {% endif %}
+                                {% endfor %}
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        $(function () {
+            $('[data-toggle="popover"]').popover()
+        });
+
+        function totalPricingAccept(id) {
+
+            var url = '{{ path('api_set_total_repair_pricing_responsetotal_repair_pricing_response', {'pricing':111111, 'responseMethod': 222222, 'pricingStatus': 333333}) }}';
+            url = url.replace(111111, id).replace(222222, '{{ constant('AppBundle\\Entity\\TotalRepairPricingResponseMethod::TYPE_APP') }}').replace(333333, '{{ constant('AppBundle\\Entity\\TotalRepairPricingStatus::TYPE_ACCEPTED') }}';
+
+            $.ajax({
+                type: 'PATCH',
+                url: url,
+                success: function (data, status, xhr) {
+                    if (xhr.status == 204) {
+                        swal("Wycena naprawy została zaakceptowana", null, "success");
+
+                        $('#confirmation-button-' + id).addClass('hidden');
+                        $('#pricing-glyphicon-' + id).removeClass('glyphicon-remove text-danger').addClass('glyphicon-ok text-success');
+
+                        $('#confirmation-data-' + id).html(
+                                'Data akceptacji: ' + moment().format("DD.MM.YYYY HH:mm:ss") +
+                                '<br>' +
+                                'Sposób akceptacji: poprzez aplikację');
+                    }
+                },
+                error: function () {
+                    swal("Wystąpiły błędy", null, "error")
+                }
+            });
+        }
+    </script>
+
+{% endblock %}

@@ -1,0 +1,13 @@
+services:
+    gedmo.listener.timestampable:
+            class: Gedmo\Timestampable\TimestampableListener
+            tags:
+                - { name: doctrine.event_subscriber, connection: default }
+            calls:
+                - [ setAnnotationReader, [ "@annotation_reader" ] ]
+
+    limit_pagination_listener:
+            class: AppBundle\EventListener\LimitPaginationListener
+            arguments: ["@request_stack"]
+            tags:
+                - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }

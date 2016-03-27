@@ -1,0 +1,29 @@
+<li class="timeline-inverted">
+    <div class="timeline-badge {% if entry.type == constant('AppBundle\\Entity\\Message::TYPE_PRIVATE') %}warning{% else %}info{% endif %}">
+        <img id="envelope" src="{{ asset('bundles/app/images/read.png') }}" class="timeline-envelope"/>
+    </div>
+    <div data-message-id="{{ entry.id }}"
+         class="timeline-panel {% if entry.sender == app.user %}my-message{% endif %}">
+        <div class="timeline-heading">
+            <h4 class="timeline-title">
+                {% if entry.type == constant('AppBundle\\Entity\\Message::TYPE_PRIVATE') %}
+                    Notatka (widoczne tylko dla pracowników)
+                {% else %}
+                    Wiadomość publiczna
+                {% endif %}
+            </h4>
+        </div>
+        <div class="timeline-body">
+            <p>
+                {{ entry.content | raw }}
+            </p>
+            <span>
+                <small class="text-muted">
+                    {{ entry.sender.name }} {{ entry.sender.surname }},<br>
+                    {{ entry.created | date('d.m.Y H:i:s') }}
+                    {{ helper_service.daysVariety(entry.created) }}
+                </small>
+            </span>
+        </div>
+    </div>
+</li>

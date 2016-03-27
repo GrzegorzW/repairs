@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    {#todo#}
+    {#<link rel="shortcut icon" href="{{ asset('bundles/app/images/mf-small-logo.png') }}">#}
+    <link rel="shortcut icon" href="{{ asset('bundles/app/images/favicon.ico') }}">
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <title>Nie zlaziono tej strony.</title>
+
+    {% stylesheets
+    'bundles/app/css/bootstrap.min.css'
+    'bundles/app/css/style.css'
+    filter='cssrewrite' %}
+    <link rel="stylesheet" href="{{ asset_url }}"/>
+    {% endstylesheets %}
+
+    {% javascripts
+    'bundles/app/js/jquery-2.1.4.min.js'
+    'bundles/app/js/bootstrap.min.js'
+    'bundles/app/js/sweetalert.min.js' %}
+    <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+</head>
+<body>
+
+<div class="container text-center" style="padding-top: 150px; max-width: 300px;">
+    {#todo#}
+    {#{% image '@AppBundle/Resources/public/images/logo1.jpg' %}#}
+    {#<a href="{{ company_service.getCompany.mainSite }}"><img src="{{ asset_url }}" style="padding-bottom: 40px;"/></a>#}
+    {#{% endimage %}#}
+
+    {#<img src="{{ asset('bundles/app/images/mf-logo.png') }}" style="padding-bottom: 40px;"/>#}
+    <img src="{{ asset('bundles/app/images/logo1.jpg') }}" style="padding-bottom: 40px;"/>
+
+    <div class="alert alert-danger">
+        Ups, coś poszło nie tak.
+    </div>
+    <a href="{{ path('pokwitowanie_user_panel') }}" class="btn green">Przejdź do strony głównej</a>
+</div>
+</body>
+</html>

@@ -1,0 +1,239 @@
+{% extends 'AppBundle::base.html.twig' %}
+
+{% block title %}
+    | Edycja wpisu
+{% endblock %}
+
+{% block pageContainer %}
+
+    {% include 'AppBundle::alerts.html.twig' %}
+
+    <div class="col-md-6">
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                Edycja wpisu
+                {% if is_granted('ROLE_SUPER_ADMIN') %}
+                    <div class="pull-right">
+                        <button type="button" class="btn btn-info btn-xs" data-toggle="modal"
+                                data-target="#editLocalizationModal">
+                            Lokalizacja
+                        </button>
+                        <button type="button" class="btn btn-primary btn-xs" data-toggle="modal"
+                                data-target="#repairPricingChangelogModal">
+                            Historia
+                        </button>
+                    </div>
+                {% endif %}
+            </div>
+            <ul class="list-group">
+                <li class="list-group-item">
+                    <strong>Marka i model:</strong> {{ repairCost.repair.device.brand }} {{ repairCost.repair.device.model }}
+                </li>
+                <li class="list-group-item"><strong>Autor wpisu:</strong> {{ repairCost.author }}</li>
+                <li class="list-group-item">
+                    <strong>Data utworzenia:</strong>
+                    {{ repairCost.created | date('d.m.Y H:i:s') }}
+                </li>
+                {% if is_granted('ROLE_SUPER_ADMIN') and repairCost.localization is not null %}
+                    <li class="list-group-item">
+                        <strong>Lokalizacja przypisania: </strong><span
+                                class="repair-cost-localization">{{ repairCost.localization }}</span>
+                    </li>
+                {% endif %}
+            </ul>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        {{ form_start(editCostForm) }}
+
+                        {{ form_row(editCostForm.description, {'attr': {'class': 'input-sm', 'placeholder': 'opis'}, 'label': 'Opis'}) }}
+                    </div>
+                    <div class="col-md-3">
+                        {{ form_label(editCostForm.price.tbbc_amount, 'Kwota') }}
+                        {{ form_widget(editCostForm.price.tbbc_amount, {'attr': {'class': 'input-sm money-amount', 'placeholder': 'kwota'}}) }}
+                        {% if form_errors(editCostForm) %}
+                            <ul class="list-unstyled">
+                                <li class="text-danger">
+                                    <span class="glyphicon glyphicon-exclamation-sign"></span>
+                                    To pole zawiera błędy
+                                </li>
+                            </ul>
+                            <script>
+                                $('#pricing_price_tbbc_amount').css('border-color', '#a94442');
+                            </script>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-3">
+                        {{ form_row(editCostForm.cost_kind, {'attr': {'class': 'input-sm'}, 'label': 'Typ'}) }}
+                    </div>
+                </div>
+                <div class="form-inline">
+                    <a href="{{ path('worker_panel_repair_details',{'id':repairCost.repair.id}) }}" type="button"
+                       class="btn btn-default btn-sm">
+                        Powrót
+                    </a>
+                    {% if is_granted("ROLE_SUPER_ADMIN") %}
+                        {{ form_widget(editCostForm.delete, { 'attr': {'class': 'btn-sm btn-danger', 'onclick': 'return confirm(\'Czy na pewno chcesz usunąć?\');'}}) }}
+                    {% endif %}
+                    <div class="pull-right">
+                        {{ form_widget(editCostForm.save, { 'attr': {'class': 'btn-sm btn-success pull-right'}}) }}
+
+                        {% do editCostForm.delete.setRendered %}
+
+                        {{ form_end(editCostForm) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if is_granted("ROLE_SUPER_ADMIN") %}
+
+        {% set action = "Akcja" %}
+        {% set data = "Dane" %}
+        {% set timeStamp = "Data" %}
+        {% set author = "Autor" %}
+
+        <div class="modal fade" id="repairPricingChangelogModal" tabindex="-1" role="dialog"
+             aria-labelledby="repairPricingChangelogModal">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                    aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="repairPricingChangelogModal">Historia zmian</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover" id="convertable-table">
+                                <thead>
+                                <tr>
+                                    <th>
+                                        {{ action }}
+                                    </th>
+                                    <th>
+                                        {{ data }}
+                                    </th>
+                                    <th>
+                                        {{ timeStamp }}
+                                    </th>
+                                    <th>
+                                        {{ author }}
+                                    </th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for change in pricingChangelog %}
+                                    <tr>
+                                        <td data-title="{{ action }}">
+                                            {% set message = change.action %}
+                                            {{ message|trans }}
+                                        </td>
+                                        <td data-title="{{ data }}">
+                                            {% for key, data in change.data %}
+                                                {% set message = key %}
+                                                {{ message|trans }}:
+                                                {% if data is iterable %}
+                                                    {% for row in data %}
+                                                        {{ row }}
+                                                    {% endfor %}
+                                                {% else %}
+                                                    {{ data }}
+                                                {% endif %}
+                                                <br>
+                                            {% endfor %}
+                                        </td>
+                                        <td data-title="{{ timeStamp }}">
+                                            {{ change.loggedAt | date('d.m.Y H:i:s') }}
+                                        </td>
+                                        <td data-title="{{ author }}">
+                                            {{ change.username }}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Zamknij</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="editLocalizationModal" tabindex="-1" role="dialog"
+             aria-labelledby="editLocalizationModal">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                    aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="editLocalizationModal">Lokalizacja</h4>
+                    </div>
+                    <form id="editLocalizationForm">
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label for="localizationSelectModal">Lokalizacja przypisania</label>
+                                <select type="select" id="localizationSelectModal" class="form-control"
+                                        name="localizationSelectModal"
+                                        required="required"
+                                        data-error="Wybierz lokalizację przypisania.">
+                                    {% for choice in localization_service.allLocalizations %}
+                                        <option value="{{ choice.id }}"
+                                                {% if choice == repairCost.localization %}selected{% endif %}>
+                                            {{ choice.name }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Anuluj</button>
+                            <input type="submit" class="btn btn-success" value="Zatwierdź"/>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    <script>
+        $(".money-amount").inputmask({
+            alias: 'numeric',
+            digits: 2,
+            digitsOptional: false,
+            rightAlign: false
+        });
+
+
+        {% if is_granted('ROLE_SUPER_ADMIN') %}
+        $('#editLocalizationForm').submit(function (e) {
+
+            e.preventDefault();
+
+            $('#editLocalizationModal').modal('hide');
+
+            var url = '{{ path('api_update_repair_cost_localizationedit_repair_cost_localization',{'repairCost':repairCost.id, 'localization': 12345}) }}';
+            var localization = $('#localizationSelectModal').val();
+            url = url.replace('12345', localization);
+
+            $.ajax({
+                type: 'PATCH',
+                url: url,
+                success: function (data, status, xhr) {
+                    if (xhr.status == 204) {
+                        var localizationName = $('#localizationSelectModal option:selected').text();
+                        $('.repair-cost-localization').text(localizationName);
+                        swal("Lokalizacja została zmieniona", null, "success");
+                    }
+                },
+                error: function () {
+                    swal("Wystąpiły błędy", null, "error")
+                }
+            });
+        });
+        {% endif %}
+    </script>
+
+{% endblock %}

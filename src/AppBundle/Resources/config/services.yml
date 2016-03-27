@@ -1,0 +1,65 @@
+services:
+    pagination_manager:
+        class: AppBundle\Service\PaginationManager
+        arguments: ['@knp_paginator', '@request_stack']
+    communication_manager:
+        class: AppBundle\Service\CommunicationManager
+        arguments: ['@doctrine.orm.entity_manager']
+    repair_manager:
+        class: AppBundle\Service\RepairManager
+        arguments: ['@doctrine.orm.entity_manager', '@session', '@helpers', '@security.authorization_checker']
+    user_manager:
+        class: AppBundle\Service\UserManager
+        arguments: ['@doctrine.orm.entity_manager', '@security.password_encoder', %security.role_hierarchy.roles%, '@security.authorization_checker', '@libphonenumber.phone_number_util']
+    company_manager:
+        class: AppBundle\Service\CompanyManager
+        arguments: ['@doctrine.orm.entity_manager']
+    regulations_manager:
+        class: AppBundle\Service\RegulationsManager
+        arguments: ['@doctrine.orm.entity_manager']
+    email_manager:
+        class: AppBundle\Service\EmailManager
+        arguments: ['@mailer', '%mailer_user%', '@templating', '@doctrine.orm.entity_manager', '@translator']
+    helpers:
+        class: AppBundle\Helpers\Helpers
+    localization_manager:
+        class: AppBundle\Service\LocalizationManager
+        arguments: ['@doctrine.orm.entity_manager', '@libphonenumber.phone_number_util']
+    pokwitowanie_history_manager:
+        class: AppBundle\Service\PokwitowanieHistoryManager
+        arguments: ['@doctrine.orm.entity_manager', '@regulations_manager', '@router.default', '@device_manager']
+    financial_manager:
+        class: AppBundle\Service\FinancialManager
+        arguments: ['@doctrine.orm.entity_manager']
+    status_manager:
+        class: AppBundle\Service\StatusManager
+        arguments: ['@doctrine.orm.entity_manager']
+    changelog_manager:
+        class: AppBundle\Service\ChangelogManager
+        arguments: ['@doctrine.orm.entity_manager']
+    worker_order_manager:
+        class: AppBundle\Service\WorkerOrderManager
+        arguments: ['@doctrine.orm.entity_manager']
+    password_resetting:
+        class: AppBundle\EventListener\FOSListener
+        arguments: ['@router', '@doctrine.orm.entity_manager']
+        tags:
+            - { name: kernel.event_subscriber }
+    login_success_listener:
+        class:      AppBundle\EventListener\LoginSuccessListener
+        arguments:  ['@router', '@security.authorization_checker']
+        tags:
+            - { name: 'monolog.logger', channel: 'security' }
+    notification_manager:
+        class: AppBundle\Service\NotificationManager
+        arguments: ['@doctrine.orm.entity_manager', '@user_manager', '@security.authorization_checker']
+    custom_field_template_manager:
+        class: AppBundle\Service\CustomFieldTemplateManager
+        arguments: ['@doctrine.orm.entity_manager', '@validator']
+    device_manager:
+        class: AppBundle\Service\DeviceManager
+        arguments: ['@doctrine.orm.entity_manager', '@validator', '@custom_field_template_manager']
+    total_repair_pricing_subscriber:
+        class: AppBundle\EventSubscriber\TotalRepairPricingSubscriber
+        tags:
+            - { name: doctrine.event_subscriber, connection: default }

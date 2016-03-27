@@ -1,0 +1,14 @@
+{% extends "AppBundle:Emails:base.html.twig" %}
+
+{% block messageContainer %}
+
+    W celu poprawy jakości obsługi prosimy Cię o wyrażenie opinii o naprawie. Twoje zdanie jest dla nas bardzo cenne.
+    <br><br>
+    <a href="{{ url('pokwitowanie_user_panel_details', {'id': repair.id }) }}" target="_blank">Dodaj opinię</a><br><br>
+
+    {% if additionalMessage is not null %}
+        Wiadomość od serwisanta:<br>
+        {{ additionalMessage }}
+    {% endif %}
+
+{% endblock %}

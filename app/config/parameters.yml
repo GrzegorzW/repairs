@@ -1,0 +1,15 @@
+# This file is auto-generated during the composer install
+parameters:
+    database_host: 127.0.0.1
+    database_port: 3306
+    database_name: serwis
+    database_user: root
+    database_password: root
+    mailer_transport: gmail
+    mailer_host: 127.0.0.1
+    mailer_user: pongosgw@gmail.com
+    mailer_password: G03WaWit
+    secret: ThisTokenIsNotSoSecretChangeIt
+    google_client_id: null
+    google_client_secret: null
+    google_redirect_url: 'http://pokwitowanie.devlabs.pl/admin/authenticate-google/return-url'

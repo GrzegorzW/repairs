@@ -1,0 +1,12 @@
+{% extends "AppBundle:Emails:base.html.twig" %}
+
+{% block messageContainer %}
+
+    Twój sprzęt: {{ repair.device.brand }} {{ repair.device.model }} (ID: {{ repair.device.altId }}) oczekuje w kolejce na diagnozę.<br><br>
+
+    {% if additionalMessage is not null %}
+        Wiadomość od serwisanta:<br>
+        {{ additionalMessage }}
+    {% endif %}
+
+{% endblock %}

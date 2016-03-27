@@ -1,0 +1,66 @@
+<li>
+    <div class="timeline-badge primary">
+        <span class="timeline-dollar">$</span>
+    </div>
+    <div class="timeline-panel">
+        <div class="timeline-heading">
+            <h4 class="timeline-title">
+                {% if entry == lastRepairTotalPricing and not repair.totalRepairPricingChanged %}Aktualna wycena: {% else %}Wycena: {% endif %}
+                <span id="repair-total-price-{{ entry.id }}">{{ entry.totalPrice | money_format }}</span>
+                <span class="glyphicon
+                {% if entry.status.type == constant('AppBundle\\Entity\\TotalRepairPricingStatus::TYPE_ACCEPTED') %}
+                text-success glyphicon-ok
+                {% else %}
+                text-danger glyphicon-remove
+                {% endif %}"
+                      id="pricing-glyphicon-{{ entry.id }}"
+                      role="button"
+                      data-toggle="popover"
+                      data-container="body"
+                      data-trigger="focus hover" data-placement="bottom"
+                      data-content="Wycena {% if entry.status.type == constant('AppBundle\\Entity\\TotalRepairPricingStatus::TYPE_ACCEPTED') %}została{% else %}nie została jeszcze{% endif %} zaakceptowana.">
+                </span>
+            </h4>
+            <p id="confirmation-data-{{ entry.id }}">
+                {% if entry.status.type == constant('AppBundle\\Entity\\TotalRepairPricingStatus::TYPE_ACCEPTED') %}
+                    Data akceptacji: {{ entry.respondedAt is empty ? "-" : entry.respondedAt|date('d.m.Y H:i:s') }}
+                    <br>
+                    Sposób akceptacji: {{ entry.method.name |trans|default('-') }}
+                    <br>
+                    Przez {{ entry.respondent.name }} {{ entry.respondent.surname }}
+                {% endif %}
+            </p>
+            <ul id="repair-pricing-descriptions-{{ entry.id }}">
+                {% for description in entry.descriptions %}
+                    <li>
+                        {{ description }}
+                    </li>
+                {% endfor %}
+            </ul>
+            {% if entry.status.type != constant('AppBundle\\Entity\\TotalRepairPricingStatus::TYPE_ACCEPTED') and entry == lastRepairTotalPricing %}
+                    <button role="button" class="btn btn-xs btn-success repair-pricing-confirmation-button"
+                            id="confirmation-button-{{ entry.id }}"
+                            onclick="
+                            {% if is_granted('ROLE_WORKER') %}
+                                showWorkerPricingAcceptationModal({{ entry.id }});
+                            {% else %}
+                                totalPricingAccept({{ entry.id }});
+                            {% endif %}"
+                            data-id="{{ entry.id }}">
+                        Zaakceptuj wycenę
+                    </button>
+            {% endif %}
+            <br>
+            <span>
+                <small class="text-muted">
+                    {% if is_granted('ROLE_WORKER') %}
+                        Dodane przez:
+                        {{ entry.user.name }} {{ entry.user.surname }},<br>
+                    {% endif %}
+                    {{ entry.created |date('d.m.Y H:i:s') }}
+                    {{ helper_service.daysVariety(entry.created) }}
+                </small>
+            </span>
+        </div>
+    </div>
+</li>

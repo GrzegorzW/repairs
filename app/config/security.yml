@@ -1,0 +1,60 @@
+# To get started with security, check out the documentation:
+# http://symfony.com/doc/current/book/security.html
+security:
+    encoders:
+        FOS\UserBundle\Model\UserInterface: bcrypt
+
+    role_hierarchy:
+        ROLE_PERMISSION_PUBLIC_MESSAGES:
+        ROLE_PERMISSION_POKWITOWANIE_CREATE:
+        ROLE_PERMISSION_SALE_CREATE:
+        ROLE_PERMISSION_USER_SECTION:
+        ROLE_PERMISSION_CHANGE_REPAIRER:
+        ROLE_PERMISSION_LOCALIZATION_REPAIRS:
+        ROLE_PERMISSION_LOCALIZATION_DEVICES:
+        ROLE_PERMISSION_ALL_REPAIRS:
+        ROLE_PERMISSION_ALL_DEVICES:
+        ROLE_USER:
+        ROLE_WORKER:
+            - ROLE_USER
+        ROLE_ADMIN:
+            - ROLE_USER
+            - ROLE_WORKER
+        ROLE_SUPER_ADMIN:
+            - ROLE_ADMIN
+            - ROLE_PERMISSION_PUBLIC_MESSAGES
+            - ROLE_PERMISSION_POKWITOWANIE_CREATE
+            - ROLE_PERMISSION_SALE_CREATE
+            - ROLE_PERMISSION_USER_SECTION
+            - ROLE_PERMISSION_CHANGE_REPAIRER
+            - ROLE_PERMISSION_LOCALIZATION_REPAIRS
+            - ROLE_PERMISSION_LOCALIZATION_DEVICES
+            - ROLE_PERMISSION_ALL_REPAIRS
+            - ROLE_PERMISSION_ALL_DEVICES
+
+    # http://symfony.com/doc/current/book/security.html#where-do-users-come-from-user-providers
+    providers:
+        fos_userbundle:
+            id: fos_user.user_provider.username_email
+
+    firewalls:
+        main:
+            pattern: ^/
+            form_login:
+                provider: fos_userbundle
+                use_referer: false
+                success_handler: login_success_listener
+            logout:       true
+            anonymous:    true
+
+    access_control:
+        - { path: ^/login$, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/pricing-accepted, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/admin, role: ROLE_SUPER_ADMIN }
+        - { path: ^/user, role: ROLE_USER }
+        - { path: ^/worker/pokwitowanie, role: ROLE_PERMISSION_POKWITOWANIE_CREATE }
+        - { path: ^/worker/user, role: ROLE_PERMISSION_USER_SECTION }
+        - { path: ^/worker/sale, role: ROLE_PERMISSION_SALE_CREATE }
+        - { path: ^/worker, role: ROLE_WORKER }
+        - { path: ^/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/register, role: IS_AUTHENTICATED_ANONYMOUSLY }

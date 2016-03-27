@@ -1,0 +1,33 @@
+{% extends 'AppBundle::base.html.twig' %}
+
+{% block title %}
+    | Edycja arkusza | Zmiana regulaminu
+{% endblock %}
+
+{% block pageContainer %}
+
+    <h4>Treść punktu regulaminu</h4>
+    <small class="text-muted">
+        * Numer jest nadawany automatycznie.
+    </small>
+
+    <div class="row">
+        <div class="col-md-6">
+            {{ form_start(form) }}
+            {{ form_row(form.paragraph, {'attr': {'class': 'form-control'}}) }}
+            {{ form_widget(form.save, {'attr': {'class': 'btn btn-sm btn-success pull-right'}}) }}
+            {{ form_widget(form.delete,
+            {'attr':
+                {'class': 'btn btn-sm btn-danger pull-right',
+                    'style': 'margin-right: 5px;',
+                    'onclick': 'return confirm(\'Czy na pewno chcesz usunąć punkt regulaminu?\');'
+                }
+            }) }}
+            {{ form_end(form) }}
+            <a href="{{ path('admin_management') }}" class="btn btn-default btn-sm" role="button">
+                Powrót
+            </a>
+        </div>
+    </div>
+
+{% endblock %}

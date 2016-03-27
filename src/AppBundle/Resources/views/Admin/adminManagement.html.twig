@@ -1,0 +1,790 @@
+{% extends 'AppBundle::base.html.twig' %}
+
+{% block title %}
+    | Zarządzanie
+{% endblock %}
+
+{% block pageContainer %}
+
+    {% include 'AppBundle::alerts.html.twig' %}
+
+    <ul class="nav nav-tabs">
+        <li class="active"><a data-toggle="tab" href="#home">Dane firmy</a></li>
+        <li><a data-toggle="tab" href="#menu1">Regulamin</a></li>
+        <li><a data-toggle="tab" href="#menu2">Oddziały</a></li>
+        <li><a data-toggle="tab" href="#menu4">Serwis</a></li>
+        <li><a data-toggle="tab" href="#menu5">Metody płatności</a></li>
+        <li><a data-toggle="tab" href="#menu6">Formularz przyjęcia</a></li>
+    </ul>
+    <div class="tab-content">
+        <div id="home" style="padding-top: 10px;" class="tab-pane fade in active">
+            <div class="row">
+                <div class="col-md-6">
+                    {{ form_start(formCompany) }}
+                    {{ form_row(formCompany.name, {'label': 'company.name'}) }}
+                    {{ form_row(formCompany.street, {'label': 'company.street'}) }}
+                    {{ form_row(formCompany.city, {'label': 'company.city'}) }}
+                    {{ form_row(formCompany.post_code, {'label': 'company.post_code'}) }}
+                    {{ form_row(formCompany.NIP, {'label': 'company.nip'}) }}
+                    {{ form_row(formCompany.main_site, {'label': 'company.main_site'}) }}
+                    {{ form_row(formCompany.email_subject_begin, {'label': 'company.mailing_subject_begin'}) }}
+                    {{ form_row(formCompany.logoFile, {'label': 'company.logo'}) }}
+                    <hr>
+                    {{ form_row(formCompany.smallLogoFile, {'label': 'company.small_logo'}) }}
+                    <input type="submit" class="btn btn-sm btn-success pull-right" value="Zatwierdź zmiany">
+                    {{ form_end(formCompany) }}
+                </div>
+            </div>
+        </div>
+        <div id="menu1" class="tab-pane fade">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="panel panel-default" style="margin-top: 15px;">
+                        <div class="panel-heading">
+                            Regulamin
+                            <a href="{{ path('admin_management_regulatory_paragraph_add') }}" title="Dodaj"
+                               class="btn btn-xs btn-success pull-right">
+                                <span class="glyphicon glyphicon-plus"></span> Dodaj punkt regulaminu
+                            </a>
+                        </div>
+                        <ul class="list-group">
+                            {% for entry in regulations %}
+                                <li class="list-group-item">
+                                    <div class="row">
+                                        <div class="pull-right">
+                                            <a style="margin-right: 10px;"
+                                               href="{{ path('admin_management_regulatory_paragraph_edit',{'id':entry.id}) }}"
+                                               data-toggle="tooltip" data-placement="right" title="Edytuj&nbsp;wpis">
+                                                <span class="glyphicon glyphicon-pencil"
+                                                      style="font-size: 20px;"></span>
+                                            </a>
+                                        </div>
+                                        <div style="padding-left: 5px;">
+                                            <strong>{{ loop.index }}. </strong>{{ entry.paragraph }}
+                                        </div>
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="menu2" style="padding-top: 10px;" class="tab-pane fade">
+            <div class="row">
+                <div class="col-md-12">
+                    <a href="{{ path('admin_management_localization_add') }}" role="button"
+                       class="btn btn-sm btn-success"
+                       style="margin-bottom: 10px;">
+                        <span class="glyphicon glyphicon-plus"></span>
+                        Dodaj oddział
+                    </a>
+                </div>
+                {% for localization in localizations %}
+                    <div class="col-md-6">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                Nazwa: {{ localization.name }}
+                                <a href="{{ path('worker_panel_pokwitowanie-example_print',{'id': localization.id }) }}"
+                                   title="Kliknij aby zobaczyć.">
+                                    <button type="button" class="btn btn-info btn-xs pull-right">
+                                        Pokwitowanie
+                                    </button>
+                                </a>
+                                <a href="{{ path('admin_management_localization_edit',{'id': localization.id }) }}"
+                                   title="Kliknij aby zmienić.">
+                                    <button type="button" class="btn btn-primary btn-xs pull-right"
+                                            style="margin-right: 10px;">Edycja
+                                    </button>
+                                </a>
+                            </div>
+                            <ul class="list-group">
+                                <li class="list-group-item">
+                                    <strong>Miasto: </strong>{{ localization.city }}
+                                </li>
+                                <li class="list-group-item">
+                                    <strong>Ulica: </strong>{{ localization.street }}
+                                </li>
+                                <li class="list-group-item">
+                                    <strong>Kod pocztowy: </strong>{{ localization.postCode }}
+                                </li>
+                                <li class="list-group-item">
+                                    <strong>Telefon główny: </strong>
+                                    {% if localization.tel1 is not null %}
+                                        {{ phone_number_format(localization.tel1) }}
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </li>
+                                <li class="list-group-item">
+                                    <strong>Telefon dodatkowy: </strong>
+                                    {% if localization.tel2 is not null %}
+                                        {{ phone_number_format(localization.tel2) }}
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </li>
+                                <li class="list-group-item">
+                                    <strong>Telefon pomocniczy: </strong>
+                                    {% if localization.tel3 is not null %}
+                                        {{ phone_number_format(localization.tel3) }}
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </li>
+                                <li class="list-group-item">
+                                    <strong>E-mail główny: </strong>{{ localization.emailFirst }}
+                                </li>
+                                <li class="list-group-item">
+                                    <strong>E-mail dodatkowy: </strong>
+                                    {% if localization.emailSecond is not null %}
+                                        {{ localization.emailSecond }}
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </li>
+                                <li class="list-group-item">
+                                    <strong>Godziny otwarcia (pn-pt): </strong>{{ localization.monFriOpen }}
+                                </li>
+                                <li class="list-group-item">
+                                    <strong>Godziny otwarcia (sob): </strong>
+                                    {% if localization.satOpen  is not null %}
+                                        {{ localization.satOpen }}
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </li>
+                                <li class="list-group-item">
+                                    <strong>Pracownicy: </strong>
+                                    <ul class="list-inline">
+                                        {% for employee in localization_service.employeesByLocalizationId(localization.id) %}
+                                            <li class="list-group-item-text">
+                                                <a href="{{ path('admin_management_edit_repairer',{'id':employee.id}) }}">
+                                                    {{ employee.name }} {{ employee.surname }}
+                                                </a>
+                                            </li>
+                                        {% else %}
+                                            -
+                                        {% endfor %}
+                                    </ul>
+                                    <a href="{{ path('admin_management_add_repairer',{'id':localization.id}) }}"
+                                       role="button" class="btn btn-xs btn-default"
+                                       style="margin-top: 15px;">
+                                        <span class="glyphicon glyphicon-plus"></span>
+                                        Dodaj pracownika
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div id="menu4" class="tab-pane fade">
+            <div class="row" style="margin-top: 10px">
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">Typy kosztów związane z serwisem</div>
+                                <form class="form-inline" id="add-repair-cost-kind">
+                                    <table class="table" style="margin-bottom: 0;" id="repairCostKind">
+                                        <thead>
+                                        <tr>
+                                            <th>
+                                                Nazwa
+                                            </th>
+                                            <th>
+                                                Typ
+                                            </th>
+                                            <th></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for costKind in repairCostKinds %}
+                                            <tr id="table-repair-cost-kind-row-{{ costKind.id }}">
+                                                <td>
+                                                    {{ costKind.name }}
+                                                </td>
+                                                <td>
+                                                    {% if costKind.type == constant('AppBundle\\Entity\\RepairCostKind::TYPE_PLUS') %}
+                                                        Cena dla klienta.
+                                                    {% endif %}
+                                                    {% if costKind.type == constant('AppBundle\\Entity\\RepairCostKind::TYPE_MINUS') %}
+                                                        Koszt ponoszony przez serwis.
+                                                    {% endif %}
+
+                                                </td>
+                                                <td>
+                                                    <span onclick="removeRepairCostKind({{ costKind.id }});"
+                                                          class="glyphicon glyphicon-trash pull-right delete-repair-cost-kind text-danger"></span>
+                                                </td>
+                                            </tr>
+                                        {% else %}
+                                            <tr id="emptyRepairCostKinds">
+                                                <td colspan="3">
+                                                    Brak zdefiniowanych kosztów.
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                        <tr>
+                                            <td>
+                                                <label for="add-repair-cost-kind-name" class="sr-only">Nowy
+                                                    koszt:</label>
+                                                <input class="input-sm form-control" type="text"
+                                                       id="add-repair-cost-kind-name"
+                                                       required placeholder="Nazwa" style="width: 100%">
+                                            </td>
+                                            <td>
+                                                <label for="add-repair-cost-kind-type" class="sr-only"></label>
+                                                <select id="add-repair-cost-kind-type" class="form-control input-sm"
+                                                        style="width: 100%">
+                                                    <option value="{{ constant('AppBundle\\Entity\\RepairCostKind::TYPE_PLUS') }}">
+                                                        Cena dla klienta
+                                                    </option>
+                                                    <option value="{{ constant('AppBundle\\Entity\\RepairCostKind::TYPE_MINUS') }}">
+                                                        Koszt ponoszony przez serwis
+                                                    </option>
+                                                </select>
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-sm btn-success pull-right"
+                                                        id="add-repair-cost-kind-submit">
+                                                    <span class="glyphicon glyphicon-plus">Dodaj</span></button>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="menu5" class="tab-pane fade">
+            <div class="row" style="margin-top: 10px">
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">Metody płatności</div>
+                                <form class="form-inline" id="add-payment-method-form">
+                                    <table class="table" style="margin-bottom: 0;" id="paymentMethodsTable">
+                                        <thead>
+                                        <tr>
+                                            <th>
+                                                Nazwa
+                                            </th>
+                                            <th></th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for method in paymentMethods %}
+                                            <tr id="table-payment-method-row-{{ method.id }}">
+                                                <td>
+                                                    {{ method.name }}
+                                                </td>
+                                                <td>
+                                                    <span onclick="removePaymentMethod({{ method.id }})"
+                                                          class="glyphicon glyphicon-trash pull-right delete-payment-method text-danger"></span>
+                                                </td>
+                                            </tr>
+                                        {% else %}
+                                            <tr id="emptyPaymentMethods">
+                                                <td colspan="2">
+                                                    Brak zdefiniowanych metod płatności.
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                        <tr>
+                                            <td>
+                                                <label for="add-payment-method-input" class="sr-only">Nowy typ:</label>
+                                                <input class="input-sm form-control" type="text"
+                                                       id="add-payment-method-input"
+                                                       required placeholder="Nazwa" style="width: 100%">
+                                            </td>
+                                            <td>
+                                                <button class="btn btn-sm btn-success pull-right"
+                                                        id="add-payment-method-submit">
+                                                    <span class="glyphicon glyphicon-plus ">Dodaj</span>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="menu6" class="tab-pane fade">
+            <div class="row" style="margin-top: 10px">
+                <div class="col-md-12">
+                    <a href="{{ path('admin_management_device_type_add') }}"
+                       class="btn btn-sm btn-success"
+                       style="margin-bottom: 10px;">
+                        <span class="glyphicon glyphicon-plus"></span>
+                        Dodaj typ
+                    </a>
+                </div>
+                {% for column in deviceTypes|batch(3) %}
+                    <div class="row">
+                        <div class="col-md-12">
+                            {% for entry in column %}
+                                <div class="col-md-4" id="deviceType{{ entry.id }}">
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading">
+                                            <span class="panel-title">Typ: <span
+                                                        id="deviceTypeName{{ entry.id }}">{{ entry.name }}</span></span>
+                                            <span onclick="customFields.removeDeviceTypeModal({{ entry.id }})"
+                                                  class="glyphicon glyphicon-trash text-danger pull-right"
+                                                  style="margin-top: 3px;"></span>
+                                        </div>
+                                        <div class="panel-body" style="padding-top: 5px">
+                                            <h4>Dodatkowe pola</h4>
+                                            {% for option in entry.customFieldsTemplates if option.isVisible() %}
+                                                <div class="list-group custom-field"
+                                                     id="deviceTypeTemplateField{{ option.id }}">
+                                                    <div class="list-group-item">
+                                                        <span onclick="customFields.removeDeviceTypeTemplateModal({{ option.id }})"
+                                                              class="glyphicon glyphicon-trash text-danger pull-right hidden"></span>
+                                                        <h4 class="list-group-item-heading"
+                                                            data-custom-field-index="{{ loop.index }}">#{{ loop.index }}
+                                                            -
+                                                            <span id="deviceTypeTemplateName{{ option.id }}">{{ option.name }}</span>
+                                                        </h4>
+                                                        <p class="list-group-item-text">
+                                                            <strong>Czy wymagane: </strong>
+                                                            {% if option.isRequired %}Tak{% else %}Nie{% endif %}
+                                                            <br>
+                                                            {% if option.customFieldTemplateValues is not empty %}
+                                                                <strong>Opcjonalne wartości: </strong><br>
+                                                                {% for value in option.customFieldTemplateValues %}
+                                                                    - {{ value.name }}<br>
+                                                                {% endfor %}
+                                                            {% endif %}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            {% else %}
+                                                <span id="noAdditionalFields">Formularz nie zawiera dodatkowych pól</span>
+                                            {% endfor %}
+                                            <button type="button" class="btn btn-sm btn-success pull-right"
+                                                    data-toggle="modal" data-target="#addCustomFieldModal"
+                                                    onclick="customFields.setTypeId({{ entry.id }})">
+                                                <span class="glyphicon glyphicon-plus"></span>
+                                                Dodaj dodatkowe pole
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="addCustomFieldModal" tabindex="-1" role="dialog"
+         aria-labelledby="addCustomFieldModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="addCustomFieldModalLabel">Dodatkowe pole</h4>
+                </div>
+                <form id="addCustomFieldForm">
+                    <div id="addCustomFieldContainer" class="modal-body">
+                        <fieldset id="addCustomFieldFieldset">
+                            <div class="form-group">
+                                <label for="customFieldName" class="required">Nazwa pola</label>
+                                <input type="text" class="form-control" required id="customFieldName"
+                                       name="customFieldName">
+                            </div>
+                            <div class="form-group">
+                                <div class="checkbox">
+                                    <label for="customFieldRequired">
+                                        <input type="checkbox" id="customFieldRequired" name="customFieldRequired"
+                                               value="1">
+                                        Wymagane?
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="customFieldTypeSelect" class="required">Typ pola</label>
+                                <select class="form-control" required id="customFieldTypeSelect"
+                                        name="customFieldTypeSelect">
+                                    <option value="1">Pole tekstowe</option>
+                                    <option value="2">Pole wyboru</option>
+                                </select>
+                            </div>
+                            <hr>
+                            <div class="form-options"></div>
+                        </fieldset>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Anuluj</button>
+                        <input type="submit" class="btn btn-sm btn-success pull-right" name="addCustomFieldSubmit"
+                               id="addCustomFieldSubmit"
+                               value="Zatwierdź"/>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="removeDeviceTypeModal" tabindex="-1" role="dialog"
+         aria-labelledby="removeDeviceTypeModalLabel">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title" id="removeDeviceTypeModalLabel">
+                        Typ:
+                        <span id="deviceTypeNameToRemove"></span>
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    Czy na pewno chcesz usunąć?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Anuluj</button>
+                    <button type="button" class="btn btn-sm btn-danger" id="removeDeviceTypeButton">Usuń</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="removeDeviceTypeTemplateModal" tabindex="-1" role="dialog"
+         aria-labelledby="removeDeviceTypeTemplateModalLabel">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title" id="removeDeviceTypeTemplateModalLabel">
+                        <span id="deviceTypeTemplateNameToRemove"></span>
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    Czy na pewno chcesz usunąć?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-default" data-dismiss="modal">Anuluj</button>
+                    <button type="button" class="btn btn-sm btn-danger" id="removeDeviceTypeTemplateButton">Usuń
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="http://ajax.microsoft.com/ajax/jquery.templates/beta1/jquery.tmpl.js"></script>
+    <script>
+        var customFields = {
+            element: $('#addCustomFieldContainer'),
+            optionsCounter: 0,
+            removeAllOptions: function () {
+                customFields.optionsCounter = 0;
+                $('#addCustomFieldFieldset').find('.form-options').html('');
+            },
+            addBaseOption: function () {
+                $('#addCustomFieldFieldset').find('.form-options').html($.tmpl(customFields.templates.baseOption));
+            },
+            addOption: function () {
+                customFields.optionsCounter++;
+                var options = $('#addCustomFieldFieldset').find('.form-options');
+                $.tmpl(customFields.templates.option, {index: customFields.optionsCounter}).insertAfter(options.find('.form-group:last'));
+            },
+            removeOption: function (index) {
+                $('#customFieldOption' + index).remove();
+            },
+            setTypeId: function (index) {
+                $('#addCustomFieldForm').data('typeId', index);
+            },
+            addCreatedField: function (id, data) {
+                var fieldset = $('#deviceType' + id);
+                var sequence = fieldset.find('.custom-field').length + 1;
+                var options = fieldset.find('.custom-field:last');
+                $.tmpl(customFields.templates.createdField, {
+                    data: data,
+                    sequence: sequence
+                }).insertAfter(options);
+            },
+            clearModalForm: function () {
+                $('#customFieldName').val('');
+                $('#customFieldRequired').removeAttr('checked');
+                $('#customFieldTypeSelect').prop('selectedIndex', 0);
+                $('.form-options').html('');
+            },
+            removeDeviceTypeModal: function (index) {
+                var deviceTypeName = $('#deviceTypeName' + index).text();
+                $('#deviceTypeNameToRemove').text(deviceTypeName);
+                $('#removeDeviceTypeButton').attr('onclick', 'customFields.removeDeviceType(' + index + ')');
+                $('#removeDeviceTypeModal').modal('show');
+            },
+            removeDeviceType: function (index) {
+                var url = '{{ path('api_remove_device_typeremove_device_type', {'deviceType': '11111111'}) }}';
+                url = url.replace('11111111', index);
+
+                $.ajax({
+                    type: 'DELETE',
+                    url: url,
+                    success: function () {
+                        swal("Typ został usunięty", null, "warning");
+                        $('#removeDeviceTypeModal').modal('hide');
+                        $('#deviceType' + index).remove();
+                    },
+                    error: function () {
+                        swal("Wystąpiły błędy", 'Typ nie został usunięty', "error")
+                    }
+                });
+            },
+            removeDeviceTypeTemplateModal: function (index) {
+                var deviceTypeTemplateName = $('#deviceTypeTemplateName' + index).text();
+                $('#deviceTypeTemplateNameToRemove').text(deviceTypeTemplateName);
+                $('#removeDeviceTypeTemplateButton').attr('onclick', 'customFields.removeDeviceTypeTemplate(' + index + ')');
+                $('#removeDeviceTypeTemplateModal').modal('show');
+            },
+            removeDeviceTypeTemplate: function (index) {
+                var url = '{{ path('api_remove_device_type_templateremove_custom_field_template', {'customFieldTemplate': '11111111'}) }}';
+                url = url.replace('11111111', index);
+
+                console.log(index);
+
+                $.ajax({
+                    type: 'DELETE',
+                    url: url,
+                    success: function () {
+                        swal("Pole zostało usunięte", null, "warning");
+                        $('#removeDeviceTypeTemplateModal').modal('hide');
+                        $('#deviceTypeTemplateField' + index).remove();
+                    },
+                    error: function () {
+                        swal("Wystąpiły błędy", 'Pole nie zostało usunięte', "error")
+                    }
+                });
+            },
+            templates: {
+                baseOption: '<div class="form-group">' +
+                '<label class="required">Wartość do wyboru</label>' +
+                '<input type="text" class="form-control" required placeholder="Wartość do wyboru"' +
+                'name="customFieldOptions[]">' +
+                '</div>' +
+                '<button type="button" class="btn btn-block btn-success"' +
+                'onclick="customFields.addOption();"><span' +
+                'class="glyphicon glyphicon-plus"></span> Dodaj wartość' +
+                '</button>' +
+                '<hr>',
+                option: '<div class="form-group" id="customFieldOption${index}" style="margin-top: 20px;">' +
+                '<label class="required">Wartość do wyboru</label>' +
+                '<div class="row">' +
+                '<div class="col-md-10">' +
+                '<input type="text" class="form-control" required placeholder="Wartość do wyboru" name="customFieldOptions[]">' +
+                '</div>' +
+                '<div class="col-md-2 text-right">' +
+                '<button type="button" class="btn btn-sm btn-danger" onclick="customFields.removeOption(${index});"><span class="glyphicon glyphicon-trash"></span> Usuń</button>' +
+                '</div>' +
+                '</div>' +
+                '</div>',
+                createdField: '<div class="list-group custom-field">' +
+                '<a href="#" class="list-group-item"' +
+                'id="deviceTypeTemplateField${data.id}">' +
+                '<span onclick="customFields.removeDeviceTypeTemplateModal(${data.id})"' +
+                'class="glyphicon glyphicon-trash text-danger pull-right hidden"></span>' +
+                '<h4 class="list-group-item-heading"' +
+                'data-custom-field-index="${data.index}">#${sequence} - ' +
+                '${data.name}</h4>' +
+                '<p class="list-group-item-text">' +
+                '<strong>Czy wymagane: </strong>' +
+                '\{\{if data.is_required\}\}Tak\{\{else\}\}Nie\{\{/if\}\}' +
+                '<br>' +
+                '\{\{if data.custom_field_template_values.length\}\}' +
+                '<strong>Opcjonalne wartości: </strong><br>' +
+                '\{\{each data.custom_field_template_values\}\}' +
+                '- ${$value.name}<br>' +
+                '\{\{/each\}\}' +
+                '\{\{/if\}\}' +
+                '</p>' +
+                '</a>' +
+                '</div>'
+            }
+        };
+
+        $(document).ready(function () {
+            $('#customFieldTypeSelect').change(function () {
+                var fieldset = $(this).closest('fieldset');
+                if ($(this).val() == 2) {
+                    customFields.addBaseOption();
+                } else {
+                    customFields.removeAllOptions();
+                }
+            });
+
+            $('#addCustomFieldForm').submit(function (e) {
+                e.preventDefault();
+
+                var typeId = $(this).data('typeId');
+                var url = '{{ path('api_create_device_type_custom_field_templatecreate_device_type_custom_field', {'deviceType': 'plain_id'}) }}';
+                url = url.replace('plain_id', typeId);
+
+                $.ajax({
+                    type: 'POST',
+                    data: $(this).serialize(),
+                    url: url,
+                    success: function (data) {
+                        customFields.addCreatedField(typeId, data);
+                        customFields.clearModalForm();
+                        $('#addCustomFieldModal').modal('hide');
+                        swal("Pole zostało dodane", data.name, "success");
+                    },
+                    error: function () {
+                        swal("Wystąpiły błędy", 'Uzupełnij wymagane pola', "error")
+                    }
+                });
+            });
+
+            $('#formCompany_post_code').formatter({
+                'pattern': '\{\{99\}\}-\{\{999\}\}',
+                'persistent': true
+            });
+
+            $('#add-repair-cost-kind').submit(function (e) {
+                e.preventDefault();
+
+                var name = $('#add-repair-cost-kind-name').val();
+                var type = $('#add-repair-cost-kind-type').val();
+
+                if (name.length < 2 || name.length > 25) {
+                    swal("Wystąpiły błędy", "Nazwa może składać się z 2 do 25 znaków", "error");
+                    return false;
+                }
+
+                $.ajax({
+                    type: 'POST',
+                    data: {
+                        name: name,
+                        type: type
+                    },
+                    url: '{{ path('api_create_repair_cost_kindcreate_repair_cost_kind') }}',
+                    success: function (data, status, xhr) {
+                        if (xhr.status == 201) {
+                            $('#add-repair-cost-kind-name').val("");
+                            swal("Typ został dodany", data.name, "success");
+
+                            var nameOfType;
+
+                            if (data.type == 1) {
+                                nameOfType = "Cena dla klienta."
+                            } else {
+                                nameOfType = "Koszt ponoszony przez serwis."
+                            }
+
+                            if ($('#emptyRepairCostKinds')) {
+                                $('#emptyRepairCostKinds').remove();
+                            }
+
+                            $('#repairCostKind tr:last').before(
+                                    "<tr id='table-repair-cost-kind-row-" + data.id + "'>" +
+                                    "<td>" + data.name + "</td>" +
+                                    "<td>" + nameOfType + "</td>" +
+                                    "<td><span onclick='removeRepairCostKind(" + data.id + ")' class='glyphicon glyphicon-trash pull-right delete-repair-cost-kind text-danger'></span></td>" +
+                                    "</tr>"
+                            );
+                        }
+                    },
+                    error: function () {
+                        swal("Wystąpiły błędy", "Nazwa może składać się z 2 do 25 znaków", "error")
+                    }
+                });
+            });
+
+            $('#add-payment-method-form').submit(function (e) {
+                e.preventDefault();
+
+                var name = $('#add-payment-method-input').val();
+
+                if (name.length < 2 || name.length > 25) {
+                    swal("Wystąpiły błędy", "Nazwa może składać się z 2 do 25 znaków", "error");
+                    return false;
+                }
+
+                $.ajax({
+                    type: 'POST',
+                    data: {
+                        name: name
+                    },
+                    url: '{{ path('api_create_payment_methodcreate_payment_method') }}',
+                    success: function (data, status, xhr) {
+                        if (xhr.status == 201) {
+                            $('#add-payment-method-input').val("");
+
+                            if ($('#emptyPaymentMethods')) {
+                                $('#emptyPaymentMethods').remove();
+                            }
+
+                            swal("Typ został dodany", data.name, "success");
+                            $('#paymentMethodsTable tr:last').before(
+                                    "<tr id='table-payment-method-row-" + data.id + "'>" +
+                                    "<td>" + data.name + "</td>" +
+                                    "<td><span onclick='removePaymentMethod(" + data.id + ")' class='glyphicon glyphicon-trash pull-right delete-payment-method text-danger'></span></td>" +
+                                    "</tr>");
+                        }
+                    },
+                    error: function () {
+                        swal("Wystąpiły błędy", "Nazwa może składać się z 2 do 25 znaków", "error");
+                    }
+                });
+            });
+        });
+
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+        });
+
+        function removeRepairCostKind(id) {
+            var url = '{{ path("api_remove_repair_cost_kindremove_repair_cost_kind", {'id': 'plain_id'}) }}';
+            url = url.replace("plain_id", id);
+
+            $.ajax({
+                type: 'DELETE',
+                url: url,
+                success: function (data, status, xhr) {
+                    if (xhr.status == 204) {
+                        swal("Typ został usunięty", null, "success");
+                        $('#table-repair-cost-kind-row-' + id).remove();
+                    }
+                },
+                error: function () {
+                    swal("Wystąpiły błędy", "Typ został już użyty", "error")
+                }
+            });
+        }
+
+        function removePaymentMethod(id) {
+            var url = '{{ path("api_remove_payment_methodremove_payment_method", {'id': 'plain_id'}) }}';
+            url = url.replace("plain_id", id);
+
+            $.ajax({
+                type: 'DELETE',
+                url: url,
+                success: function (data, status, xhr) {
+                    if (xhr.status == 204) {
+                        swal("Typ został usunięty", null, "success");
+                        $('#table-payment-method-row-' + id).remove();
+                    }
+                },
+                error: function () {
+                    swal("Wystąpiły błędy", "Typ został już użyty", "error")
+                }
+            });
+        }
+    </script>
+{% endblock %}

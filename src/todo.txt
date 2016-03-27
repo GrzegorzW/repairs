@@ -1,0 +1,10 @@
+//todo data przekazania sprzetu do podwykonawcy
+//todo nieprzeczytane wiadomosci mozna zrobic za pomoca kryterium wyszukiwania
+//todo brak informacji o tym, ze email resetujacy zostal wyslany
+//todo usuwanie lokalizacji
+//todo Zmiana naprawiajacego nie aktualizuje timeline
+//todo app:init - validacja emaila!
+
+//todo przuycisk powrotu na stronie user->naprawa
+
+//todo po zakonczeniu naprawy w podsumowaniu zamiast kwota do zapłaty ustawić zapłacono  - zeby nie bylo kwasu, gdy ktos zrezygnujke z naprawy a wyceny zostana podliczone

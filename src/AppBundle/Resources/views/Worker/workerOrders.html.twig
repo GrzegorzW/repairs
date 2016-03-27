@@ -1,0 +1,356 @@
+{% extends 'AppBundle::base.html.twig' %}
+
+{% block title %}
+    Zamówienia
+{% endblock %}
+
+{% block pageContainer %}
+
+    {% include 'AppBundle::alerts.html.twig' %}
+
+    <div class="row" style="margin-bottom: 15px;">
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading add-worker-order-header" style="cursor: pointer;">
+                    <h3 class="panel-title"><span class="glyphicon glyphicon-plus"></span> Dodaj wpis</h3>
+                </div>
+                <div class="panel-body add-worker-order-body {% if formOrder.vars.valid %}hidden{% endif %}">
+                    {{ form_start(formOrder) }}
+                    <div class="form-group">
+                        {{ form_row(formOrder.description, {'label': 'Opis'}) }}
+                    </div>
+                    <div class="form-group">
+                        {{ form_row(formOrder.href, {'label': 'Link'}) }}
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="Dodaj"
+                               class="btn btn-success btn-sm pull-right"/>
+                    </div>
+                    {{ form_end(formOrder) }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div style="margin-bottom: 15px;">
+        {% include 'AppBundle:PaginationLimit:paginationLimit.html.twig' %}
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-striped table-bordered" id="convertable-table">
+            <thead>
+            <tr>
+                <th>
+                    {{ knp_pagination_sortable(pagination, 'ID', 'wo.id') }}
+                </th>
+                <th>
+                    {{ knp_pagination_sortable(pagination, 'Opis', 'wo.description') }}
+                </th>
+                <th>
+                    {{ knp_pagination_sortable(pagination, 'Link', 'wo.href') }}
+                </th>
+                <th>
+                    {{ knp_pagination_sortable(pagination, 'Utworzono', 'wo.created') }}
+                </th>
+                <th>
+                    {{ knp_pagination_sortable(pagination, 'Autor', 'user.name') }}
+                </th>
+                <th style="min-width: 140px">
+                    {{ knp_pagination_sortable(pagination, 'Status', 'status.name') }}
+                </th>
+                <th>Edytuj</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for entry in pagination %}
+                <tr data-row="{{ entry.id }}" class="workerOrderRow">
+                    <td data-title="ID">
+                        {{ entry.id }}
+                    </td>
+                    <td data-title="Opis"
+                        data-description-{{ entry.id }}="{{ entry.description }}">{{ entry.description }}</td>
+                    <td data-title="Link" data-href-{{ entry.id }}="{{ entry.href }}">
+                        {% if entry.href is not empty %}
+                        <a href="{{ entry.href }}" target="_blank"
+                           title="{{ entry.href }}">{{ entry.href[:40]|default('-') }}{% if entry.href|length > 40 %}...{% endif %}</a>
+                        {% else %}
+                        -
+                        {% endif %}
+                    </td>
+                    <td data-title="Utworzono" data-created-{{ entry.id }}="{{ entry.created | date('d.m.Y H:i:s') }}">
+                        {{ entry.created | date('d.m.Y H:i:s') }}
+                    </td>
+                    <td data-title-="Autor" data-author-{{ entry.id }}="{{ entry.author.username }}">
+                        {{ entry.author.name }} {{ entry.author.surname }}
+                    </td>
+                    <td data-title="Status" data-status="{{ entry.id }}">
+                        <label class="control-label sr-only" for="orderStatus">Status</label>
+                        <select class="form-control workerOrderStatus" id="orderStatus" data-id="{{ entry.id }}">
+                            {% for status in statuses %}
+                                <option value="{{ status.id }}"
+                                        {% if entry.status.id == status.id %}
+                                            selected
+                                        {% endif %}
+                                >
+                                    {{ status.name }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <td>
+                        <button type="button" data-id="{{ entry.id }}" class="btn btn-xs btn-success edit-order-button">
+                            Edytuj
+                        </button>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="7" data-title="Zamówienia">Brak rekordów do wyświetlenia.</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="navigation text-center">
+        {{ knp_pagination_render(pagination) }}
+    </div>
+    <small class="help-block text-center">
+        Liczba wyników: {{ pagination.getTotalItemCount }}
+    </small>
+
+    <!-- Modal -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Edycja</h4>
+                </div>
+                <div class="modal-body">
+                    <form id="editWorkerOrderForm">
+                        <div class="form-group">
+                            <label for="modalOrderDescription">Opis*</label>
+                            <textarea class="form-control" required="required" type="text" name="modalOrderDescription"
+                                      id="modalOrderDescription"
+                                      rows="5"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="modalOrderHref">Link</label>
+                            <input class="form-control" type="text" name="modalOrderHref" id="modalOrderHref"/>
+                        </div>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Anuluj</button>
+                        <button type="button" id="deleteWorkerOrder" class="btn btn-danger" data-dismiss="modal">
+                            Usuń
+                        </button>
+                        <input type="submit" class="btn btn-success pull-right" value="Zatwierdź"/>
+                    </form>
+
+                    <hr>
+
+                    <div id="modalOrderHistory" class="modal-order-history">
+                        <div class="table-responsive" style="padding-top: 0">
+                            <table class="table table-bordered table-hover" id="convertable-table">
+                                <thead>
+                                <tr>
+                                    <th>
+                                        Akcja
+                                    </th>
+                                    <th>
+                                        Opis
+                                    </th>
+                                    <th>
+                                        Dane
+                                    </th>
+                                    <th>
+                                        Autor
+                                    </th>
+                                </tr>
+                                </thead>
+                                <tbody id="modalOrderHistoryRows">
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="text-center hide-order-history" style="cursor: pointer;">
+                            <h5 class="text-muted"><span class="glyphicon glyphicon-triangle-top"><br/>Historia</span>
+                            </h5>
+                        </div>
+                    </div>
+                    <div class="text-center show-order-history" style="cursor: pointer;">
+                        <h5 class="text-muted">Historia<br/><span class="glyphicon glyphicon-triangle-bottom"></span>
+                        </h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="http://ajax.microsoft.com/ajax/jquery.templates/beta1/jquery.tmpl.js"></script>
+    <script>
+        $('.add-worker-order-header').click(function () {
+            $('.add-worker-order-body').toggleClass('hidden');
+        });
+
+        $('.edit-order-button').click(function () {
+
+            var id = $(this).data('id');
+            var orderDescription = $('[data-description-' + id + ']').text().trim();
+            var orderHref = $('[data-href-' + id + ']').attr('data-href-' + id + '');
+
+            $('#deleteWorkerOrder').data('data-id', id);
+
+            $('.show-order-history').data('id', id).show();
+            $('#modalOrderDescription').text(orderDescription);
+            $('#modalOrderHref').val(orderHref);
+
+            $('.modal-order-history').hide();
+            $('#myModal').modal();
+
+            $('#editWorkerOrderForm').unbind('submit');
+            $('#editWorkerOrderForm').bind('submit', function (e) {
+                e.preventDefault();
+
+                var url = "{{ path('api_update_worker_order_contentupdate_worker_order_content',{'workerOrder':44444}) }}";
+                url = url.replace("44444", id);
+
+                $.ajax({
+                    type: 'PATCH',
+                    data: $('#editWorkerOrderForm').serialize(),
+                    url: url,
+                    success: function (data, status, xhr) {
+                        if (xhr.status == 204) {
+                            swal("Treść zamówienia zmieniona", null, "success");
+
+                            description = $('#modalOrderDescription').val();
+                            href = $('#modalOrderHref').val();
+
+                            $('[data-description-' + id + ']').text(description).attr("data-description-" + id, description);
+                            if (href.length) {
+                                $('[data-href-' + id + ']').html('<a href="' + href + '" target="_blank" title="' + href + '">' + href + '</a>').attr("data-href-" + id, href);
+                            } else {
+                                $('[data-href-' + id + ']').text('-').attr("data-href-" + id, href);
+                            }
+
+                            $('#myModal').modal('hide')
+                        }
+                    },
+                    error: function () {
+                        swal("Błąd", null, "error")
+                    }
+                });
+            });
+        });
+
+        $('.show-order-history').click(function () {
+
+            id = $('.show-order-history').data('id');
+
+            var url = "{{ path('api_get_worker_order_historyget_worker_order',{'id':12345}) }}";
+            url = url.replace("12345", id);
+
+            $.ajax({
+                type: 'GET',
+                data: {
+                    id: id
+                },
+                url: url,
+                success: function (data, status, xhr) {
+                    if (xhr.status == 200) {
+
+                        var changelog = JSON.parse(data);
+
+                        appendRows(changelog);
+
+                        $('.modal-order-history').slideDown();
+                        $('.show-order-history').hide();
+                    }
+                },
+                error: function () {
+                    swal("Błąd", null, "error")
+                }
+            });
+        });
+
+        $('.hide-order-history').click(function () {
+            $('.modal-order-history').slideUp();
+            $('.show-order-history').show();
+        });
+
+        function appendRows(data) {
+
+            var apiData = data;
+
+            $('#modalOrderHistoryRows').html('');
+            markup = '<tr>' +
+                    '<td data-title="Akcja">' +
+                    '\{\{if action == "update" \}\}Zmieniono\{\{/if\}\}' +
+                    '\{\{if action == "create" \}\}Utworzono\{\{/if\}\}' +
+                    '\{\{if action == "remove" \}\}Usunuięto\{\{/if\}\}' +
+                    '</td>' +
+                    '<td data-title="Opis">' +
+                    '\{\{if data.description \}\}<strong>Opis:</strong> ${data.description} <br />\{\{/if\}\}' +
+                    '\{\{if data.href \}\}<strong>Link:</strong> <a href="${data.href}" target="_blank">${data.href}</a> <br />\{\{/if\}\}' +
+                    '\{\{if data.status \}\}<strong>Status:</strong> ${data.status.id.name} <br />\{\{/if\}\}' +
+                    '</td>' +
+                    '<td data-title="Data">${logged_at}</td>' +
+                    '<td data-title="Autor">${username}</td>' +
+                    '</tr>';
+
+            $.tmpl(markup, apiData).appendTo("#modalOrderHistoryRows");
+        }
+
+        $('.workerOrderStatus').change(function () {
+
+            var workerOrder = $(this).data('id');
+            var workerOrderStatus = $(this).val();
+            var url = "{{ path('api_set_worker_order_statusset_worker_order_status',{'workerOrder':44444, 'workerOrderStatus':66666}) }}";
+            url = url.replace("44444", workerOrder).replace("66666", workerOrderStatus);
+
+            $.ajax({
+                type: 'PATCH',
+                data: {
+                    order: workerOrder,
+                    status: workerOrderStatus
+                },
+                url: url,
+                success: function (data, status, xhr) {
+                    if (xhr.status == 204) {
+                        swal("Status zmieniony", null, "success");
+                    }
+                },
+                error: function () {
+                    swal("Błąd", null, "error")
+                }
+            });
+        });
+
+        $('#deleteWorkerOrder').click(function () {
+
+            id = $(this).data('data-id');
+            var url = "{{ path('api_remove_worker_orderremove_worker_order',{'id':12345}) }}";
+            url = url.replace("12345", id);
+
+            $.ajax({
+                type: 'DELETE',
+                url: url,
+                success: function (data, status, xhr) {
+                    if (xhr.status == 204) {
+                        swal("Usunięto wpis", null, "error");
+                        $("tr[data-row='" + id + "']").remove();
+
+                        if ($('tr.workerOrderRow').length == 0) {
+                            $('#convertable-table > tbody:last-child').append("<tr>" +
+                                    "<td colspan='7' id='noWorkerOrders' data-title='Zamówienia'>Brak rekordów do wyświetlenia.</td>" +
+                                    "</tr>");
+                        }
+                    }
+                },
+                error: function () {
+                    swal("Błąd", null, "warning");
+                }
+            });
+        });
+    </script>
+
+{% endblock %}

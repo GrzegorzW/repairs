@@ -1,0 +1,81 @@
+<li data-toggle="collapse" data-parent="#accordion" href="#collapseMobileNotifications" aria-expanded="true"
+    aria-controls="collapseMobileNotifications" style="cursor: pointer">
+    <a title="Powiadomienia" style="overflow-x: auto">
+        Powiadomienia
+        {% if notification_service.unreadNotificationsCount(app.user) %}
+            <span class="badge unread-notifications-count pull-right">
+                {{ notification_service.unreadNotificationsCount(app.user) }}
+            </span>
+        {% endif %}
+    </a>
+</li>
+<div id="collapseMobileNotifications" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne"
+     style="max-height: 200px; overflow-y: auto;">
+    <ul class="list-group" style="margin-bottom: 0">
+        {% for entry in notification_service.userNotifications(app.user) %}
+            <li class="list-group-item notification-entry-mobile{% if not entry.isRead %} unread-notification-entry-mobile{% endif %}"
+                data-notification-id="{{ entry.id }}" style="position: relative">
+                <a class="notification-link" href="
+                    {% if is_granted('ROLE_WORKER') %}
+                    {{ path('worker_panel_repair_details',{'id':entry.object.repair.id}) }}
+                    {% else %}
+                    {{ path('pokwitowanie_user_panel_details',{'id':entry.object.repair.id}) }}
+                    {% endif %}">
+                </a>
+                {% if helper_service.instanceOf(entry.object, 'AppBundle\\Entity\\Message') %}
+                    <span class="notification-decoration-mobile">{{ entry.object.sender.name }} {{ entry.object.sender.surname }}</span> -
+                    {% if entry.object.type == constant('AppBundle\\Entity\\Message::TYPE_PRIVATE') %}
+                        notatka:
+                    {% else %}
+                        wiadomość:
+                    {% endif %}
+                    <br>
+                    {{ entry.object.content[:40]|default('-') }}{% if entry.object.content|length > 40 %}...{% endif %}
+                    <br>
+                    <span class="notification-decoration-mobile">{{ entry.object.repair.device.brand }} {{ entry.object.repair.device.model }}</span>
+                    <br>
+                    <small class="text-muted">{{ entry.createdAt|date('Y-m-d H:i:s') }}</small>
+                {% endif %}
+            </li>
+        {% else %}
+            <li class="list-group-item">
+                Brak powiadomień
+            </li>
+        {% endfor %}
+    </ul>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('#collapseMobileNotifications').on('show.bs.collapse', function () {
+            $('li[data-toggle="collapse"][href="#collapseOne"]').addClass('active');
+        });
+
+        $('#collapseMobileNotifications').on('hide.bs.collapse', function () {
+            $('li[data-toggle="collapse"][href="#collapseOne"]').removeClass('active');
+        });
+
+        $('li.unread-notification-entry-mobile > a').click(function (e) {
+            e.preventDefault();
+
+            var id = $(this).parent().data('notification-id');
+            var url = '{{ path("api_set_notification_readread_notification", {'id': '12345'}) }}';
+            url = url.replace("12345", id);
+
+            var redirectUrl = $(this).attr('href');
+
+            $.ajax({
+                type: 'PATCH',
+                url: url,
+                success: function (data, status, xhr) {
+                    if (xhr.status == 204) {
+                        window.location.replace(redirectUrl);
+                    }
+                },
+                error: function () {
+                    window.location.replace(redirectUrl);
+                }
+            });
+        })
+    });
+</script>

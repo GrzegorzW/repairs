@@ -1,0 +1,17 @@
+{% extends "AppBundle:Emails:base.html.twig" %}
+
+{% block messageContainer %}
+
+    {{ user.name }} {{ user.surname }} przypisał Ci naprawę.<br><br>
+    Szczegóły:<br>
+    ID: {{ repair.device.altId }}<br>
+    Marka i model: {{ repair.device.brand }} {{ repair.device.model }}<br>
+    Opis usterki: {{ repair.description }}<br>
+    Data przyjęcia przez serwis: {{ repair.startDate | date('d.m.Y')}}<br><br>
+
+    {% if additionalMessage is not null %}
+        Dodatkowa wiadomość:<br>
+        {{ additionalMessage }}
+    {% endif %}
+
+{% endblock %}

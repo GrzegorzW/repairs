@@ -1,0 +1,271 @@
+{% extends "AppBundle::base.html.twig" %}
+
+{% block title %}
+    | Panel klienta
+{% endblock %}
+
+{% block pageContainer %}
+
+    {% include 'AppBundle::alerts.html.twig' %}
+
+    <div class="row">
+        {% if user.repairs is not empty %}
+            <div class="col-md-6">
+                <div class="panel-group" id="repairs-collapse" role="tablist" aria-multiselectable="true">
+                    {% for repair in user.repairs %}
+                        <div class="panel panel-info">
+                            <div class="panel-heading" role="tab" id="heading{{ loop.index }}" data-toggle="collapse"
+                                 data-parent="#repairs-collapse" href="#collapse-repair-{{ loop.index }}"
+                                 aria-expanded="{% if loop.index == 1 %}true{% else %}false{% endif %}"
+                                 aria-controls="collapse-repair-{{ loop.index }}" style="cursor: pointer">
+                                <span class="panel-title {% if loop.index != 1 %}collapsed{% endif %}">
+                                    ID {{ repair.device.altId }} - {{ repair.device.brand }} {{ repair.device.model }}
+                                </span>
+                                <span class="glyphicon glyphicon-triangle-bottom pull-right"
+                                      style="margin-top: 2px;"></span>
+                            </div>
+                            <div id="collapse-repair-{{ loop.index }}"
+                                 class="panel-collapse collapse {% if loop.index == 1 %}in{% endif %}" role="tabpanel"
+                                 aria-labelledby="heading{{ loop.index }}">
+                                <ul class="list-group">
+                                    <li class="list-group-item">
+                                        <strong>Data rozpoczęcia:</strong> {{ repair.startDate|date('Y-m-d H:i:s') }}
+                                    </li>
+                                    <li class="list-group-item">
+                                        <strong>Opis usterki i uwagi:</strong> {{ repair.description|default('-') }}
+                                    </li>
+                                    <li class="list-group-item">
+                                        <strong>Aktualny status:</strong> {{ repair.currentStatus.name }}
+                                    </li>
+                                    <li class="list-group-item">
+                                        <strong>Data
+                                            zakończenia:</strong>
+                                        {% if repair.endDate is not null and repair.currentStatus.id != constant('AppBundle\\Entity\\Status::STATUS_RETURNED') %}
+                                            {{ repair.endDate | date('Y-m-d H:i:s') }}
+                                        {% else %}
+                                            -
+                                        {% endif %}
+                                    </li>
+                                    <li class="list-group-item">
+                                        <strong>Opinia:</strong> {{ repair.opinion|default('-') }}
+                                    </li>
+                                    <li class="list-group-item">
+                                        <a class="btn btn-xs btn-success"
+                                           href="{{ path('pokwitowanie_user_panel_details', {'id': repair.id}) }}">
+                                            Zobacz szczegóły
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+
+        <div class="col-md-6">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    Dane osobowe
+                    <div class="pull-right">
+                        <a class="btn btn-xs btn-primary" href="{{ path('fos_user_change_password') }}">Zmień hasło</a>
+                        <button type="button" class="btn btn-success btn-xs" data-toggle="modal"
+                                data-target="#userEditModal">
+                            Edytuj
+                        </button>
+                    </div>
+                </div>
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        <strong>Login:</strong> {{ user.username }}
+                    </li>
+                    <li class="list-group-item">
+                        <strong>ID użytkownika:</strong> {{ user.altId }}
+                    </li>
+                    <li class="list-group-item">
+                        <strong>Imię i nazwisko:</strong> <span id="list-name">{{ user.name }}</span> <span
+                                id="list-surname">{{ user.surname }}</span>
+                    </li>
+                    <li class="list-group-item">
+                        <strong>E-mail:</strong> {{ user.email|default('-') }}
+                    </li>
+                    <li class="list-group-item">
+                        <strong>Zgoda marketingowa:</strong> {% if user.marketingAgreement %}Tak{% else %}Nie{% endif %}
+                    </li>
+                    <li class="list-group-item">
+                        <strong>Tel:</strong> {{ phone_number_format(user.tel) }}
+                    </li>
+                    <li class="list-group-item">
+                        <strong>
+                            Ostatnio zalogowany:
+                        </strong> {{ user.lastLogin is empty ? "Niezalogowany" : user.lastLogin|date('d.m.Y H:i:s') }}
+                    </li>
+                    <li class="list-group-item">
+                        <button type="button" class="btn btn-info btn-sm btn-block user-invoice-data">
+                            Dane do faktury
+                            <span class="glyphicon glyphicon-triangle-bottom pull-right"
+                                  style="margin-top: 2px;"></span>
+                        </button>
+                    </li>
+                </ul>
+                <ul class="list-group user-invoice-data-body hidden">
+                    <li class="list-group-item">
+                        <strong>Nazwa firmy:</strong> {{ user.clientCompanyName|default('-') }}
+                    </li>
+                    <li class="list-group-item">
+                        <strong>Adres:</strong> {{ user.clientCompanyAddress|default('-') }}
+                    </li>
+                    <li class="list-group-item">
+                        <strong>Kod pocztowy:</strong> {{ user.clientCompanyPostCode|default('-') }}
+                    </li>
+                    <li class="list-group-item">
+                        <strong>Miasto:</strong> {{ user.clientCompanyCity|default('-') }}
+                    </li>
+                    <li class="list-group-item">
+                        <strong>NIP:</strong> {{ user.clientCompanyNIP|default('-') }}
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="userEditModal" tabindex="-1" role="dialog" aria-labelledby="userEditModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <h4 class="modal-title" id="userEditModalLabel">
+                        Twoje dane
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    {{ form_start(formEditUser, {'attr': {'class': ''}}) }}
+                    <div class="input-wrap">
+                        {{ form_row(formEditUser.tel, {'attr': {'class': 'input-sm'}}) }}
+                        {{ form_row(formEditUser.email, {'attr': {'class': 'input-sm'}}) }}
+                        {{ form_widget(formEditUser.marketing_agreement, {'attr': {'style': 'position: relative'}}) }}
+                        <hr>
+                        {{ form_row(formEditUser.client_company_name, {'attr': {'class': 'input-sm'}}) }}
+                        {{ form_row(formEditUser.client_company_address, {'attr': {'class': 'input-sm'}}) }}
+                        {{ form_row(formEditUser.client_company_post_code, {'attr': {'class': 'input-sm'}}) }}
+                        {{ form_row(formEditUser.client_company_city, {'attr': {'class': 'input-sm'}}) }}
+                        {{ form_row(formEditUser.client_company_NIP, {'attr': {'class': 'input-sm'}}) }}
+                    </div>
+                    {{ form_row(formEditUser.cancel, {'label': 'Anuluj', 'attr': {'class': 'btn btn-default btn-sm pull-left'}}) }}
+                    {{ form_row(formEditUser.save, {'label': 'Zatwierdź', 'attr': {'class': 'btn btn-success btn-sm pull-right'}}) }}
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            {{ form_row(formEditUser.cancel, {'label': 'Anuluj', 'attr': {'class': 'btn btn-default btn-sm pull-left'}}) }}
+                            {{ form_row(formEditUser.save, {'label': 'Edytuj', 'attr': {'class': 'btn btn-success btn-sm pull-right'}}) }}
+                        </div>
+                    </div>
+                    {{ form_end(formEditUser) }}
+                    <div class="clearfix"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {#{% if addOpinionUrl is not null %}#}
+        {#<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">#}
+            {#<div class="modal-dialog" role="document">#}
+                {#<div class="modal-content">#}
+                    {#<div class="modal-header">#}
+                        {#<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span#}
+                                    {#aria-hidden="true">&times;</span></button>#}
+                        {#<h4 class="modal-title" id="myModalLabel">#}
+                            {#Twoje zdanie jest dla nas bardzo cenne, wyraź swoją opinię.#}
+                        {#</h4>#}
+                    {#</div>#}
+                    {#<div class="modal-footer">#}
+
+                        {#<a href="{{ addOpinionUrl }}" title="Dodaj opinię">#}
+                            {#<button type="button" class="btn  btn-info">Dodaj opinię</button>#}
+                        {#</a>#}
+
+                    {#</div>#}
+                {#</div>#}
+            {#</div>#}
+        {#</div>#}
+
+        {#<script>#}
+            {#$('#myModal').modal('show');#}
+        {#</script>#}
+    {#{% endif %}#}
+
+    {% if renderFirstLoginModal %}
+        <div class="modal fade" id="firstLoginModal" tabindex="-1" role="dialog" aria-labelledby="firstLoginModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Zamknij">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <h4 class="modal-title" id="myModalLabel">Powiadomienia</h4>
+                    </div>
+                    <div class="modal-body">
+                        <h4>Hasło</h4>
+                        <blockquote class="info-blockquote">
+                            <p>
+                                Hasło zostało wygenerowane dla Ciebie automatycznie, możesz je zmienić
+                                <a href="{{ path('fos_user_change_password') }}">tutaj</a>.
+                            </p>
+                        </blockquote>
+                        {% if not app.user.email %}
+                            <hr>
+                            <h4>Adres e-mail</h4>
+                            <blockquote class="danger-blockquote">
+                                <p>
+                                    Podczas zdawania sprzętu nie został dodany adres email.
+                                    Na adres e-mail będą wysyłane informacje o aktualnym statusie naprawy.
+                                    Adres e-mail jest również niezbędny do przywrócenia zapomnianego hasła.
+                                    Możesz go dodać <a href="#" data-toggle="modal"
+                                                       data-target="#userEditModal" data-dismiss="modal">tutaj</a>.
+                                </p>
+                            </blockquote>
+                        {% endif %}
+                        {% if addOpinionUrl is not null %}
+                            <hr>
+                            <h4>Opinia o naprawie</h4>
+                            <blockquote class="info-blockquote">
+                                <p>
+                                    Twoje zdanie jest dla nas bardzo cenne, możesz wyrazić swoją opinię
+                                    <a href="{{ addOpinionUrl }}">tutaj</a>.
+                                </p>
+                            </blockquote>
+                        {% endif %}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Zamknij</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            $('#firstLoginModal').modal('show');
+        </script>
+    {% endif %}
+
+    <script>
+        {% if not formEditUser.vars.valid %}
+            $('#userEditModal').modal('show');
+        {% endif %}
+
+        $('.user-invoice-data').click(function () {
+            $('.user-invoice-data-body').toggleClass('hidden');
+        });
+
+        $('#clientSideUserType_tel').formatter({
+            'pattern': '+{\{99\}\} \{\{9999999999}\}',
+            'persistent': true
+        });
+
+        $('#clientSideUserType_client_company_post_code').formatter({
+            'pattern': '{\{99\}\}-\{\{999}\}'
+        });
+    </script>
+{% endblock %}

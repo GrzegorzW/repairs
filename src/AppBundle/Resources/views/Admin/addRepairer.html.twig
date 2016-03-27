@@ -1,0 +1,56 @@
+{% extends 'AppBundle::base.html.twig' %}
+
+{% block title %}
+    | Dodaj pracownika
+{% endblock %}
+
+{% block pageContainer %}
+
+    {% include 'AppBundle::alerts.html.twig' %}
+
+    <ul class="nav nav-tabs">
+        <li class="active"><a data-toggle="tab" href="#home">Dodaj pracownika</a></li>
+    </ul>
+
+    <div class="tab-content">
+        <div id="home" class="tab-pane fade in active">
+            <div class="row" style="margin-top: 10px;">
+                <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-md-7">
+                            {{ form_start(formRepairer) }}
+                            {{ form_errors(formRepairer) }}
+
+                            {{ form_row(formRepairer.username) }}
+                            {{ form_row(formRepairer.name) }}
+                            {{ form_row(formRepairer.surname) }}
+                            {{ form_row(formRepairer.tel) }}
+                            {{ form_row(formRepairer.email) }}
+                        </div>
+                        <div class="col-md-5">
+                            {{ form_row(formRepairer.roles) }}
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-inline">
+                                <a href="{{ path('admin_management') }}" role="button"
+                                   class="btn btn-sm btn-default">
+                                    Powrót
+                                </a>
+                                <input type="submit" class="btn btn-success btn-sm" value="Dodaj"/>
+                                {{ form_end(formRepairer) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        $('#addRepairer_tel').formatter({
+            'pattern': '+{\{99\}\} \{\{9999999999}\}',
+            'persistent': true
+        });
+    </script>
+
+{% endblock %}

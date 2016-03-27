@@ -1,0 +1,24 @@
+api:
+    resource: "@ApiBundle/Resources/config/routing.yml"
+    type:     rest
+    prefix:   /
+app:
+    resource: "@AppBundle/Resources/config/routing.yml"
+    prefix:   /
+
+fos_user:
+    resource: "@FOSUserBundle/Resources/config/routing/all.xml"
+
+root:
+    path: /
+    defaults:
+        _controller: FrameworkBundle:Redirect:urlRedirect
+        path: /login
+        permanent: true
+
+NelmioApiDocBundle:
+    resource: "@NelmioApiDocBundle/Resources/config/routing.yml"
+    prefix:   /api/doc
+
+fos_user_profile_show:
+    path: /user
