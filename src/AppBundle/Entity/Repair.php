@@ -16,7 +16,7 @@ use JMS\Serializer\Annotation as JMS;
  *
  * @Gedmo\Loggable()
  */
-class Repair implements StatementInterface
+class Repair
 {
     /**
      * @ORM\Id

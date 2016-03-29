@@ -42,7 +42,7 @@ class WorkerController extends Controller
         /** @var User $worker */
         $worker = $this->getUser();
 
-        $searchingQuery = $repairManager->prepareForPagination($request, $worker);
+        $searchingQuery = $repairManager->prepareForPagination($request->query->all(), $worker);
         $pagination = $this->get('pagination_manager')->myPagination($searchingQuery);
 
         return [

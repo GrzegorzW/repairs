@@ -284,39 +284,28 @@ class RepairManager
             if ($first === $second) {
                 return 0;
             }
-//            return $first->getCreated() < $second->getCreated() ? -1 : 1; // ASC
             return $first->getCreated() < $second->getCreated() ? 1 : -1; // DESC
         });
 
         return $sortedCollection;
     }
 
-    public function prepareForPagination(Request $request, User $repairer)
+    public function prepareForPagination(array $params, User $repairer)
     {
-        $phrase = $request->query->get('findRepairPhrase');
-        $status = $request->query->get('findRepairStatus') ? $request->query->get('findRepairStatus') : Status::STATUS_ACTIVE_REPAIR;
-        $currentRepairerId = $request->query->get('findRepairRepairer');
+        $phrase = array_key_exists('findRepairPhrase', $params) ? $params['findRepairPhrase'] : null;
+        $status = array_key_exists('findRepairStatus', $params) ?(int)$params['findRepairStatus'] : Status::STATUS_ACTIVE_REPAIR;
+        $currentRepairer = array_key_exists('findRepairRepairer', $params) ? (int)$params['findRepairRepairer'] : User::ALL_REPAIRERS;
 
-        $query = $this->repairRepository->createQueryBuilder('r')
+        $qb = $this->repairRepository->createQueryBuilder('r')
+            ->addSelect('u')
             ->leftJoin('r.user', 'u')
             ->leftJoin('r.current_status', 's')
             ->leftJoin('r.current_repairer', 'current_repairer')
             ->leftJoin('r.device', 'device')
             ->orderBy('r.startDate', 'DESC');
 
-        $this->getPhraseQueryPart($query, $phrase);
-        $this->getStatusQueryPart($query, $status);
-        $this->getRoleQueryPart($query, $repairer);
-        $this->getCurrentRepairerQueryPart($query, $currentRepairerId);
-        $query = $query->getQuery();
-
-        return $query;
-    }
-
-    public function getPhraseQueryPart(QueryBuilder $query, $phrase)
-    {
         if ($phrase) {
-            return $query = $query
+            $qb
                 ->where('r.alt_id LIKE :phrase')
                 ->orWhere('device.brand LIKE :phrase')
                 ->orWhere('device.model LIKE :phrase')
@@ -326,68 +315,37 @@ class RepairManager
                 ->orWhere('u.tel LIKE :phrase')
                 ->orWhere('u.username LIKE :phrase')
                 ->setParameter('phrase', '%' . trim($phrase) . '%');
-        } else {
-            return $query;
         }
-    }
+        if ($status !== Status::STATUS_ALL_REPAIRS) {
+            if ($status === Status::STATUS_ACTIVE_REPAIR) {
+                $qb
+                    ->andWhere('s.id != :statusId')
+                    ->setParameter('statusId', Status::STATUS_RETURNED);
 
-//    public function hasRepairerAccessToRepair(User $repairer, Repair $repair)
-//    {
-//        $repairerHistory = $repair->getRepairers();
-//        /** @var RepairersHistory $entry */
-//        foreach ($repairerHistory as $entry) {
-//            if ($entry->getUser() == $repairer) {
-//                return true;
-//            }
-//        }
-//        return false;
-//    }
-
-    public function getStatusQueryPart(QueryBuilder $query, $status)
-    {
-        if ($status == Status::STATUS_ALL_REPAIRS) {
-            return $query;
-
-        } elseif ($status == Status::STATUS_ACTIVE_REPAIR) {
-            return $query = $query
-                ->andWhere('s.id != :statusId')
-                ->setParameter('statusId', Status::STATUS_RETURNED);
-
-        } else {
-            return $query = $query
-                ->andWhere('s.id = :statusId')
-                ->setParameter('statusId', $status);
+            } else {
+                $qb
+                    ->andWhere('s.id = :statusId')
+                    ->setParameter('statusId', $status);
+            }
         }
-    }
-
-    public function getRoleQueryPart(QueryBuilder $query, User $repairer)
-    {
-        if ($repairer->hasRole('ROLE_SUPER_ADMIN') || $repairer->hasRole('ROLE_PERMISSION_ALL_REPAIRS')) {
-            return $query;
+        if (false === $repairer->hasRole('ROLE_SUPER_ADMIN') || false === $repairer->hasRole('ROLE_PERMISSION_ALL_REPAIRS')) {
+            if ($repairer->hasRole('ROLE_PERMISSION_LOCALIZATION_REPAIRS')) {
+                $qb
+                    ->andWhere('r.start_localization = :localization')
+                    ->setParameter('localization', $repairer->getLocalization());
+            } else {
+                $qb
+                    ->andWhere('r.current_repairer = :repairer')
+                    ->setParameter('repairer', $repairer);
+            }
         }
-
-        if ($repairer->hasRole('ROLE_PERMISSION_LOCALIZATION_REPAIRS')) {
-            return $query = $query
-                ->andWhere('r.start_localization = :localization')
-                ->setParameter('localization', $repairer->getLocalization());
-        }
-
-        return $query = $query
-            ->andWhere('r.current_repairer = :repairer')
-            ->setParameter('repairer', $repairer);
-    }
-
-//------------------------------BEGIN SEARCHING FOR REPAIRS------------------------------
-
-    public function getCurrentRepairerQueryPart(QueryBuilder $query, $currentRepairerId)
-    {
-        if ($currentRepairerId) {
-            return $query = $query
+        if ($currentRepairer) {
+            $qb
                 ->andWhere('current_repairer.id = :repairer_id')
-                ->setParameter('repairer_id', $currentRepairerId);
-        } else {
-            return $query;
+                ->setParameter('repairer_id', $currentRepairer);
         }
+
+        return $qb->getQuery();
     }
 
     public function createRepair(Device $device, Repair $repair, User $worker)
@@ -567,7 +525,7 @@ class RepairManager
             $respondMethod = $totalRepairPricing->getMethod()->getType();
         }
 
-        return md5($client->getSalt().$totalRepairPricing->getId().$respondMethod);
+        return md5($client->getSalt() . $totalRepairPricing->getId() . $respondMethod);
     }
 
     public function checkTotalRepairPricingHash(User $client, TotalRepairPricing $totalRepairPricing, $hash)
@@ -656,7 +614,7 @@ class RepairManager
         return
             (null !== $lastTotalRepairPricing) &&
             (null !== $lastTotalRepairPricing->getRespondedAt() &&
-            (false === $repair->isTotalRepairPricingChanged()));
+                (false === $repair->isTotalRepairPricingChanged()));
     }
 
     /**
@@ -675,7 +633,8 @@ class RepairManager
         return $descriptions;
     }
 
-    public function createDevice(array $params) {
+    public function createDevice(array $params)
+    {
 
     }
 

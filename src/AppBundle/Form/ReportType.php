@@ -48,15 +48,6 @@ class ReportType extends AbstractType
             'class' => 'AppBundle\Entity\Localization'
         ]);
 
-        $builder->add('entries', ChoiceType::class, [
-            'label' => false,
-            'mapped' => false,
-            'choices'  => [
-                'Serwis' => ReportSummary::SHOW_ONLY_REPAIRS,
-            ],
-            'choices_as_values' => true
-        ]);
-
         $builder->add('choice', ChoiceType::class, [
             'label' => false,
             'mapped' => false,

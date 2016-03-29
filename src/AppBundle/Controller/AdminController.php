@@ -19,10 +19,7 @@ use Symfony\Component\HttpFoundation\Request;
 class AdminController extends Controller
 {
     /**
-     * @Route(
-     *      "/admin/management",
-     *      name="admin_management"
-     * )
+     * @Route("/admin/management", name="admin_management")
      *
      * @Template()
      *
@@ -34,7 +31,6 @@ class AdminController extends Controller
     {
         /** @var Company $company */
         $company = $this->getUser()->getLocalization()->getCompany();
-
         $formCompany = $this->createForm(new CompanyType(), $company);
 
         if ($formCompany->handleRequest($request)->isValid()) {
@@ -57,10 +53,7 @@ class AdminController extends Controller
     }
 
     /**
-     * @Route(
-     *      "/admin/management/localizations/add",
-     *      name="admin_management_localization_add"
-     * )
+     * @Route("/admin/management/localizations/add", name="admin_management_localization_add")
      *
      * @Template()
      *
@@ -91,10 +84,7 @@ class AdminController extends Controller
     }
 
     /**
-     * @Route(
-     *      "/admin/management/device-types/add",
-     *      name="admin_management_device_type_add"
-     * )
+     * @Route("/admin/management/device-types/add", name="admin_management_device_type_add")
      *
      * @Template()
      *
@@ -106,10 +96,8 @@ class AdminController extends Controller
     }
 
     /**
-     * @Route(
-     *      "/admin/management/localizations/{id}/edit",
-     *      name="admin_management_localization_edit",
-     *      requirements={"id": "\d+"}
+     * @Route("/admin/management/localizations/{id}/edit", name="admin_management_localization_edit",
+     *     requirements={"id": "\d+"}
      * )
      *
      * @Template()
@@ -138,9 +126,7 @@ class AdminController extends Controller
     }
 
     /**
-     * @Route(
-     *      "/admin/management/regulatory/paragraphs/{id}/edit",
-     *      name="admin_management_regulatory_paragraph_edit",
+     * @Route("/admin/management/regulatory/paragraphs/{id}/edit", name="admin_management_regulatory_paragraph_edit",
      *      requirements={"id": "\d+"}
      * )
      *
@@ -185,10 +171,7 @@ class AdminController extends Controller
     }
 
     /**
-     * @Route(
-     *      "/admin/management/regulatory/paragraph/add",
-     *      name="admin_management_regulatory_paragraph_add"
-     * )
+     * @Route("/admin/management/regulatory/paragraph/add", name="admin_management_regulatory_paragraph_add")
      *
      * @Template()
      *
@@ -218,9 +201,7 @@ class AdminController extends Controller
     }
 
     /**
-     * @Route(
-     *      "/admin/management/localization/{id}/add-repairer",
-     *      name="admin_management_add_repairer",
+     * @Route("/admin/management/localization/{id}/add-repairer", name="admin_management_add_repairer",
      *      requirements={"id": "\d+"}
      * )
      *
@@ -265,9 +246,7 @@ class AdminController extends Controller
     }
 
     /**
-     * @Route(
-     *      "/admin/management/repairer/{id}/edit",
-     *      name="admin_management_edit_repairer",
+     * @Route("/admin/management/repairer/{id}/edit", name="admin_management_edit_repairer",
      *      requirements={"id": "\d+"}
      * )
      *
@@ -334,6 +313,7 @@ class AdminController extends Controller
      *
      * @param Request $request
      * @return array
+     * @throws \LogicException
      */
     public function reportAction(Request $request)
     {
@@ -342,14 +322,7 @@ class AdminController extends Controller
         $reportForm = $this->createForm(new ReportType());
 
         if ($reportForm->handleRequest($request)->isValid()) {
-            $startDate = $reportForm['startDate']->getData();
-            $endDate = $reportForm['endDate']->getData();
-            $choice = $reportForm['choice']->getData();
-            $entries = $reportForm['entries']->getData();
-            $localization = $reportForm['localization']->getData();
-            $paymentMethod = $reportForm['payment_method']->getData();
-
-            $financialSummaryCollection = $financialManager->getFinancialSummaryItems($startDate, $endDate, $choice, $localization, $entries, $paymentMethod);
+            $financialSummaryCollection = $financialManager->getFinancialSummaryItems($request->query->get('report'));
             $reportSummary = $financialManager->getReportSummary($financialSummaryCollection);
         }
 
