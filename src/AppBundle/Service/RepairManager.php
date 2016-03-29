@@ -391,9 +391,7 @@ class RepairManager
 
         return count($dailyRepairs);
     }
-
-//------------------------------END SEARCHING FOR REPAIRS------------------------------
-
+    
     public function addRepairersHistoryEntry(Repair $repair, User $user, User $author = null)
     {
         $editor = $user;
