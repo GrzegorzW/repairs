@@ -212,8 +212,7 @@ class WorkerController extends Controller
                 $this->addFlash('success', $this->get('translator')->trans('flashUserAdded'));
                 return $this->redirectToRoute('worker_panel_pokwitowanie_add_device', ['id' => $user->getId()]);
             } catch (\Exception $e) {
-                dump($e->getMessage());exit;
-                $this->addFlash('error', $this->get('translator')->trans($e->getMessage()));
+                $this->addFlash('error', $this->get('translator')->trans('flashDatabaseTransactionError'));
             }
         }
 
@@ -254,6 +253,7 @@ class WorkerController extends Controller
      * @param Device $device
      * @return array|\Symfony\Component\HttpFoundation\RedirectResponse
      * @internal param Request $request
+     * @throws \LogicException
      */
     public function addRepairAction(Request $request, Device $device)
     {
@@ -358,6 +358,9 @@ class WorkerController extends Controller
      * )
      *
      * @Template()
+     * @param Request $request
+     * @return array
+     * @throws \LogicException
      */
     public function usersAction(Request $request)
     {
@@ -384,6 +387,10 @@ class WorkerController extends Controller
      * )
      *
      * @Template()
+     * @param Request $request
+     * @param User $user
+     * @return array|\Symfony\Component\HttpFoundation\RedirectResponse
+     * @throws \LogicException
      */
     public function userDetailsAction(Request $request, User $user)
     {
@@ -419,6 +426,9 @@ class WorkerController extends Controller
      * )
      *
      * @Template()
+     * @param Request $request
+     * @return array|\Symfony\Component\HttpFoundation\RedirectResponse
+     * @throws \LogicException
      */
     public function workerOrdersAction(Request $request)
     {

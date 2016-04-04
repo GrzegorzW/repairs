@@ -290,7 +290,7 @@ class RepairManager
         return $sortedCollection;
     }
 
-    public function prepareForPagination(array $params, User $repairer)
+    public function prepareForPagination(array $params, User $worker)
     {
         $phrase = array_key_exists('findRepairPhrase', $params) ? $params['findRepairPhrase'] : null;
         $status = array_key_exists('findRepairStatus', $params) ?(int)$params['findRepairStatus'] : Status::STATUS_ACTIVE_REPAIR;
@@ -328,15 +328,16 @@ class RepairManager
                     ->setParameter('statusId', $status);
             }
         }
-        if (false === $repairer->hasRole('ROLE_SUPER_ADMIN') || false === $repairer->hasRole('ROLE_PERMISSION_ALL_REPAIRS')) {
-            if ($repairer->hasRole('ROLE_PERMISSION_LOCALIZATION_REPAIRS')) {
+//        todo poprawic logike
+        if (false === $worker->hasRole('ROLE_SUPER_ADMIN') xor false === $worker->hasRole('ROLE_PERMISSION_ALL_REPAIRS')) {
+            if ($worker->hasRole('ROLE_PERMISSION_LOCALIZATION_REPAIRS')) {
                 $qb
                     ->andWhere('r.start_localization = :localization')
-                    ->setParameter('localization', $repairer->getLocalization());
+                    ->setParameter('localization', $worker->getLocalization());
             } else {
                 $qb
                     ->andWhere('r.current_repairer = :repairer')
-                    ->setParameter('repairer', $repairer);
+                    ->setParameter('repairer', $worker);
             }
         }
         if ($currentRepairer) {

@@ -1,5 +1,4 @@
 imports:
-imports:
     - { resource: parameters.yml }
     - { resource: security.yml }
     - { resource: services.yml }
@@ -168,7 +167,7 @@ stof_doctrine_extensions:
     orm:
         default:
             tree: false
-            timestampable: true # not needed: listeners are not enabled by default
+            timestampable: true
             loggable: true
 
 doctrine_migrations:

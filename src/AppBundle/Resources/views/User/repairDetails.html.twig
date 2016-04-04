@@ -160,7 +160,7 @@
         function totalPricingAccept(id) {
 
             var url = '{{ path('api_set_total_repair_pricing_responsetotal_repair_pricing_response', {'pricing':111111, 'responseMethod': 222222, 'pricingStatus': 333333}) }}';
-            url = url.replace(111111, id).replace(222222, '{{ constant('AppBundle\\Entity\\TotalRepairPricingResponseMethod::TYPE_APP') }}').replace(333333, '{{ constant('AppBundle\\Entity\\TotalRepairPricingStatus::TYPE_ACCEPTED') }}';
+            url = url.replace(111111, id).replace(222222, '{{ constant('AppBundle\\Entity\\TotalRepairPricingResponseMethod::TYPE_APP') }}').replace(333333, '{{ constant('AppBundle\\Entity\\TotalRepairPricingStatus::TYPE_ACCEPTED') }}');
 
             $.ajax({
                 type: 'PATCH',

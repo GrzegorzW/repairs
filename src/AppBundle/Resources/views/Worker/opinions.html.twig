@@ -32,7 +32,7 @@
                     </td>
                     <td data-title="Marka i model">{{ entry.device.brand }} {{ entry.device.model }}</td>
                     <td data-title="Opinia">{{ entry.opinion | raw }}</td>
-                    <td data-title="Data opinii">{{ entry.opinionDate | date('d.m.Y') }}</td>
+                    <td data-title="Data utworzenia">{{ entry.opinionDate | date('d.m.Y') }}</td>
                 </tr>
             {% else %}
                 <tr>

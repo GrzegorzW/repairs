@@ -25,10 +25,6 @@
             </div>
 
             <div id="logo" style="max-width: 150px;">
-                {#{% image 'bundles/app/images/logo1.jpg' %}#}
-                {#<img src="{{ asset_url }}"/>#}
-                {#{% endimage %}#}
-
                 <img src="
                 {% if app.user.localization.company.logoFile is not empty %}
                     {{ asset(vich_uploader_asset(app.user.localization.company, 'logoFile')) }}
@@ -124,7 +120,7 @@
                     </tr>
                     {% for key, value in repair.customFields if value is not null %}
                         <tr>
-                            <td colspan="3"><strong>{{ key }}</strong> {{ value | default('-') }}</td>
+                            <td colspan="3"><strong>{{ key }}:</strong> {{ value | default('-') }}</td>
                         </tr>
                     {% endfor %}
                 </table>

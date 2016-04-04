@@ -1,7 +1,7 @@
 <li data-toggle="collapse" data-target="#collapseOne" href="#collapseOne" aria-expanded="true"
     aria-controls="collapseOne" style="cursor: pointer">
-    <a title="Powiadomienia" style="overflow-x: auto">
-        Powiadomienia
+    <a title="Wiadomości" style="overflow-x: auto">
+        Wiadomości
         {% if notification_service.unreadNotificationsCount(app.user) %}
             <span class="badge unread-notifications-count pull-right">
                 {{ notification_service.unreadNotificationsCount(app.user) }}
@@ -39,7 +39,7 @@
             </li>
         {% else %}
             <li class="list-group-item">
-                Brak powiadomień
+                Brak wiadomości
             </li>
         {% endfor %}
     </ul>
