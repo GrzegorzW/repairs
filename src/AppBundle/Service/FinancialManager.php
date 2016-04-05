@@ -2,6 +2,9 @@
 
 namespace AppBundle\Service;
 
+use AppBundle\Entity\PaymentMethod;
+use AppBundle\Entity\TotalRepairPricingResponseMethod;
+use AppBundle\Entity\TotalRepairPricingStatus;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\QueryBuilder;
@@ -18,6 +21,7 @@ use AppBundle\Entity\Status;
 use AppBundle\Entity\User;
 use Money\Currency;
 use Money\Money;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class FinancialManager
@@ -306,14 +310,67 @@ class FinancialManager
         $this->save($repairCost);
     }
 
+    public function createPaymentMethod($name, $sequence = null)
+    {
+        if (!$sequence) {
+            $sequence = count($this->paymentMethodRepository->findAll()) + 1;
+        }
+
+        $paymentMethod = new PaymentMethod();
+        $paymentMethod->setName($name);
+        $paymentMethod->setSequence($sequence);
+
+        return $paymentMethod;
+    }
+
+    public function createTotalRepairPricingResponseMethod($name, $type, $sequence)
+    {
+        $responseMethod = new TotalRepairPricingResponseMethod();
+        $responseMethod->setName($name);
+        $responseMethod->setSequence($sequence);
+        $responseMethod->setType($type);
+
+        $this->save($responseMethod);
+
+        return $responseMethod;
+    }
+
+    public function createTotalRepairPricingStatus($name, $type, $sequence)
+    {
+        $status = new TotalRepairPricingStatus();
+        $status->setName($name);
+        $status->setSequence($sequence);
+        $status->setType($type);
+
+        $this->save($status);
+
+        return $status;
+    }
+    
     public function getAllPaymentMethods()
     {
         return $this->paymentMethodRepository->findAll();
     }
 
+    public function getPaymentMethodById($id)
+    {
+        $paymentMethod =  $this->paymentMethodRepository->find($id);
+        if (!$paymentMethod) {
+            throw new NotFoundHttpException;
+        }
+
+        return $paymentMethod;
+    }
+    
     public function save($preparedData)
     {
         $this->em->persist($preparedData);
+        $this->em->flush();
+    }
+
+    public function remove($preparedData)
+    {
+        $this->em->remove($preparedData);
         $this->em->flush();
     }
 }

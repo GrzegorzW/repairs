@@ -145,8 +145,8 @@ class AppInitCommand extends ContainerAwareCommand
             );
 
             $statusManager = $this->getContainer()->get('status_manager');
-            $saleManager = $this->getContainer()->get('sale_manager');
             $workerOrderManager = $this->getContainer()->get('worker_order_manager');
+            $financialManager = $this->getContainer()->get('financial_manager');
             $customFieldTemplateManager = $this->getContainer()->get('custom_field_template_manager');
 
             $repairStatusName = "Oczekuje na diagnozę";
@@ -196,48 +196,48 @@ class AppInitCommand extends ContainerAwareCommand
 
 
             $paymentMethodName = "Gotówka";
-            $paymentMethod = $saleManager->createPaymentMethod($paymentMethodName, 1);
-            $saleManager->save($paymentMethod);
+            $paymentMethod = $financialManager->createPaymentMethod($paymentMethodName, 1);
+            $financialManager->save($paymentMethod);
             $output->writeln(sprintf('Created payment method: <comment>%s</comment>', $paymentMethodName));
 
             $paymentMethodName = "Przelew tradycyjny";
-            $paymentMethod = $saleManager->createPaymentMethod($paymentMethodName, 2);
-            $saleManager->save($paymentMethod);
+            $paymentMethod = $financialManager->createPaymentMethod($paymentMethodName, 2);
+            $financialManager->save($paymentMethod);
             $output->writeln(sprintf('Created payment method: <comment>%s</comment>', $paymentMethodName));
 
             $paymentMethodName = "Za pobraniem";
-            $paymentMethod = $saleManager->createPaymentMethod($paymentMethodName, 3);
-            $saleManager->save($paymentMethod);
+            $paymentMethod = $financialManager->createPaymentMethod($paymentMethodName, 3);
+            $financialManager->save($paymentMethod);
             $output->writeln(sprintf('Created payment method: <comment>%s</comment>', $paymentMethodName));
 
 
             $responseMethodName = "acceptation.method.application";
-            $saleManager->createTotalRepairPricingResponseMethod($responseMethodName, TotalRepairPricingResponseMethod::TYPE_APP, 1);
+            $financialManager->createTotalRepairPricingResponseMethod($responseMethodName, TotalRepairPricingResponseMethod::TYPE_APP, 1);
             $output->writeln(sprintf('Created acceptation method: <comment>%s</comment>', $responseMethodName));
 
             $responseMethodName = "acceptation.method.email";
-            $saleManager->createTotalRepairPricingResponseMethod($responseMethodName, TotalRepairPricingResponseMethod::TYPE_EMAIL, 2);
+            $financialManager->createTotalRepairPricingResponseMethod($responseMethodName, TotalRepairPricingResponseMethod::TYPE_EMAIL, 2);
             $output->writeln(sprintf('Created acceptation method: <comment>%s</comment>', $responseMethodName));
 
             $responseMethodName = "acceptation.method.phone";
-            $saleManager->createTotalRepairPricingResponseMethod($responseMethodName, TotalRepairPricingResponseMethod::TYPE_PHONE, 3);
+            $financialManager->createTotalRepairPricingResponseMethod($responseMethodName, TotalRepairPricingResponseMethod::TYPE_PHONE, 3);
             $output->writeln(sprintf('Created acceptation method: <comment>%s</comment>', $responseMethodName));
 
             $responseMethodName = "acceptation.method.personally";
-            $saleManager->createTotalRepairPricingResponseMethod($responseMethodName, TotalRepairPricingResponseMethod::TYPE_PERSONALLY, 4);
+            $financialManager->createTotalRepairPricingResponseMethod($responseMethodName, TotalRepairPricingResponseMethod::TYPE_PERSONALLY, 4);
             $output->writeln(sprintf('Created acceptation method: <comment>%s</comment>', $responseMethodName));
 
 
             $totalRepairPricingStatusName = "repair.total.pricing.waiting";
-            $saleManager->createTotalRepairPricingStatus($totalRepairPricingStatusName, TotalRepairPricingStatus::TYPE_WAITING_FOR_ACCEPTATION, 1);
+            $financialManager->createTotalRepairPricingStatus($totalRepairPricingStatusName, TotalRepairPricingStatus::TYPE_WAITING_FOR_ACCEPTATION, 1);
             $output->writeln(sprintf('Created acceptation status: <comment>%s</comment>', $totalRepairPricingStatusName));
 
             $totalRepairPricingStatusName = "repair.total.pricing.accepted";
-            $saleManager->createTotalRepairPricingStatus($totalRepairPricingStatusName, TotalRepairPricingStatus::TYPE_ACCEPTED, 2);
+            $financialManager->createTotalRepairPricingStatus($totalRepairPricingStatusName, TotalRepairPricingStatus::TYPE_ACCEPTED, 2);
             $output->writeln(sprintf('Created acceptation status: <comment>%s</comment>', $totalRepairPricingStatusName));
 
             $totalRepairPricingStatusName = "repair.total.pricing.rejected";
-            $saleManager->createTotalRepairPricingStatus($totalRepairPricingStatusName, TotalRepairPricingStatus::TYPE_REJECTED, 3);
+            $financialManager->createTotalRepairPricingStatus($totalRepairPricingStatusName, TotalRepairPricingStatus::TYPE_REJECTED, 3);
             $output->writeln(sprintf('Created acceptation status: <comment>%s</comment>', $totalRepairPricingStatusName));
 
 

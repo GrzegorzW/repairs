@@ -139,8 +139,6 @@ class RestApiController extends BaseController
      *   }
      * )
      *
-     * Description: Create device.
-     *
      * @RequestParam(name="typeSelect", allowBlank=false, nullable=false, strict=true, requirements="\d+", description="Device type")
      * @RequestParam(name="brand", nullable=false, allowBlank=false, strict=true, description="Device brand")
      * @RequestParam(name="model", nullable=false, allowBlank=false, strict=true, description="Device model")
@@ -172,8 +170,6 @@ class RestApiController extends BaseController
      *   }
      * )
      *
-     * Description: Get device type fields.
-     *
      * @Security("is_granted('ROLE_WORKER')")
      *
      * @Rest\Get("/device-type/{deviceType}", name="get_device_type_fields")
@@ -198,8 +194,6 @@ class RestApiController extends BaseController
      *   }
      * )
      *
-     * Description: Add device type.
-     *
      * @Security("is_granted('ROLE_SUPER_ADMIN')")
      *
      * @RequestParam(name="deviceTypeName", allowBlank=false, nullable=false, strict=true, requirements=@Assert\Length(min = 2, max = 40), description="Device type name")
@@ -208,6 +202,7 @@ class RestApiController extends BaseController
      * @Rest\Post("/admin/management/device-type", name="add_device_type")
      * @param ParamFetcher $paramFetcher
      * @return Response
+     * @throws \LogicException
      */
     public function addDeviceTypeAction(ParamFetcher $paramFetcher)
     {
@@ -244,8 +239,6 @@ class RestApiController extends BaseController
      *     404 = "Returned when message not found"
      *   })
      *
-     * Description: Add total repair pricing request.
-     *
      * @Security("is_granted('ROLE_WORKER')")
      *
      * @RequestParam(name="message", nullable=true, description="Additional message")
@@ -255,6 +248,9 @@ class RestApiController extends BaseController
      * @param ParamFetcher $paramFetcher
      * @param Repair $repair
      * @return Response
+     * @throws \Symfony\Component\HttpKernel\Exception\BadRequestHttpException
+     * @throws \Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException
+     * @throws \LogicException
      */
     public function addWorkerTotalRepairPricingRequestAction(ParamFetcher $paramFetcher, Repair $repair)
     {
@@ -287,7 +283,6 @@ class RestApiController extends BaseController
             } else {
                 $appendMessageToConfirmEmail = false;
             }
-
             if ($repair->getUser()->getEmail()) {
                 $emailAdditionalMessage = $appendMessageToConfirmEmail ? $inputMessage : null;
                 $this->get('email_manager')->sendStatusWaitingForAcceptationEmail($totalRepairPricing, $emailAdditionalMessage);
@@ -313,8 +308,6 @@ class RestApiController extends BaseController
      *     404 = "Returned when message not found"
      *   })
      *
-     * Description: Set repair pricing response.
-     *
      * @Security("is_granted('ROLE_USER')")
      *
      * @Rest\Patch("/repairs/total-pricing/{pricing}/method/{responseMethod}/status/{pricingStatus}", name="total_repair_pricing_response", requirements={"id": "\d+"})
@@ -327,6 +320,9 @@ class RestApiController extends BaseController
      * @param TotalRepairPricingResponseMethod $responseMethod
      * @param TotalRepairPricingStatus $pricingStatus
      * @return Response
+     * @throws \Symfony\Component\HttpKernel\Exception\BadRequestHttpException
+     * @throws \Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException
+     * @throws \LogicException
      */
     public function setTotalRepairPricingResponseAction(TotalRepairPricing $pricing,
                                                         TotalRepairPricingResponseMethod $responseMethod,
@@ -341,7 +337,7 @@ class RestApiController extends BaseController
         $repairManager = $this->get('repair_manager');
         $emailManager = $this->get('email_manager');
 
-        if (!$this->get('security.authorization_checker')->isGranted('ROLE_WORKER')) {
+        if (!$this->isGranted('ROLE_WORKER')) {
             if ($user !== $pricing->getRepair()->getUser()) {
                 throw new AccessDeniedHttpException();
             }
@@ -391,8 +387,6 @@ class RestApiController extends BaseController
      *     404 = "Returned when message not found"
      *   })
      *
-     * Description: Repair pricing - using email button.
-     *
      * @Rest\Get("/repairs/total-pricing/{pricing}/email-acceptation-method/{responseMethod}/{hash}", name="total_repair_pricing_acceptation_using_email")
      *
      * @ParamConverter(name="pricing", class="AppBundle:TotalRepairPricing")
@@ -402,6 +396,9 @@ class RestApiController extends BaseController
      * @param TotalRepairPricingResponseMethod $responseMethod
      * @param $hash
      * @return Response
+     * @throws \LogicException
+     * @throws \Symfony\Component\HttpKernel\Exception\BadRequestHttpException
+     * @throws \Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException
      */
     public function acceptTotalRepairPricingUsingEmailAction(TotalRepairPricing $pricing, TotalRepairPricingResponseMethod $responseMethod, $hash)
     {
@@ -415,7 +412,7 @@ class RestApiController extends BaseController
         $pricing->setMethod($responseMethod);
 
         if (!$repairManager->checkTotalRepairPricingHash($user, $pricing, $hash)) {
-            throw new AccessDeniedHttpException('Wrong hash');
+            throw new AccessDeniedHttpException();
         }
 
         if ($repairManager->getLastTotalRepairPricing($repair) !== $pricing) {
@@ -457,13 +454,13 @@ class RestApiController extends BaseController
      *     404 = "Returned when message not found"
      *   })
      *
-     * Description: Set notification read.
-     *
      * @Security("is_granted('ROLE_USER')")
      *
      * @Rest\Patch("/notifications/{id}/read", name="read_notification", requirements={"id": "\d+"})
      * @param Notification $notification
      * @return Response
+     * @throws \Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException
+     * @throws \LogicException
      */
     public function setNotificationReadAction(Notification $notification)
     {
@@ -490,13 +487,12 @@ class RestApiController extends BaseController
      *   }
      * )
      *
-     * Description: Set repair cost approved.
-     *
      * @Security("is_granted('ROLE_SUPER_ADMIN')")
      *
      * @Rest\Patch("/repair/approved/{id}", requirements={"id": "\d+"}, name="repair_approved")
      * @param Repair $repair
      * @return Response
+     * @throws \LogicException
      */
     public function setRepairCostApprovedAction(Repair $repair)
     {
@@ -519,13 +515,12 @@ class RestApiController extends BaseController
      *   }
      * )
      *
-     * Description: Set repair cost not approved.
-     *
      * @Security("is_granted('ROLE_SUPER_ADMIN')")
      *
      * @Rest\Patch("/repair/not-approved/{id}", requirements={"id": "\d+"}, name="repair_not_approved")
      * @param Repair $repair
      * @return Response
+     * @throws \LogicException
      */
     public function setRepairCostNotApprovedAction(Repair $repair)
     {
@@ -551,17 +546,10 @@ class RestApiController extends BaseController
      *  }
      * )
      *
-     * Description: Create payment method.
-     *
      * @Security("is_granted('ROLE_SUPER_ADMIN')")
      *
-     * @RequestParam(
-     *      name="name",
-     *      allowBlank=false,
-     *      nullable=false,
-     *      strict=true,
-     *      requirements=@Assert\Length(min = 2, max = 25),
-     *      description="Payment method name."
+     * @RequestParam(name="name", allowBlank=false, nullable=false, strict=true,
+     *     requirements=@Assert\Length(min = 2, max = 25), description="Payment method name."
      * )
      *
      * @Rest\Post("/payment-method", name="create_payment_method")
@@ -572,9 +560,9 @@ class RestApiController extends BaseController
     {
         $name = $paramFetcher->get('name');
 
-        $saleManager = $this->get('sale_manager');
-        $paymentMethod = $saleManager->createPaymentMethod($name);
-        $saleManager->save($paymentMethod);
+        $financialManager = $this->get('financial_manager');
+        $paymentMethod = $financialManager->createPaymentMethod($name);
+        $financialManager->save($paymentMethod);
 
         return $this->view($paymentMethod, 201);
     }
@@ -594,8 +582,6 @@ class RestApiController extends BaseController
      *      {"name"="type", "dataType"="integer", "pattern"="[1 (when customer paid) -2 (when company paid)]"}
      *  }
      * )
-     *
-     * Description: Create repair cost kind.
      *
      * @Security("is_granted('ROLE_SUPER_ADMIN')")
      *
@@ -623,12 +609,7 @@ class RestApiController extends BaseController
      */
     public function createRepairCostKindAction(ParamFetcher $paramFetcher)
     {
-        $name = $paramFetcher->get('name');
-        $type = $paramFetcher->get('type');
-
-        $repairManager = $this->get('repair_manager');
-        $repairCostKind = $repairManager->createRepairCostKind($name, $type);
-        $repairManager->save($repairCostKind);
+        $repairCostKind = $this->get('repair_manager')->createRepairCostKind($paramFetcher->get('name'), $paramFetcher->get('type'));
 
         return $this->view($repairCostKind, 201);
     }
@@ -648,8 +629,6 @@ class RestApiController extends BaseController
      *  }
      * )
      *
-     * Description: Remove repair cost kind.
-     *
      * @Security("is_granted('ROLE_SUPER_ADMIN')")
      *
      * @ParamConverter(name="id", class="AppBundle:RepairCostKind")
@@ -664,12 +643,10 @@ class RestApiController extends BaseController
         try {
             $repairManager->remove($repairCostKind);
         } catch (Exception $e) {
-            $view = $this->view([], 400);
-            return $view;
+            return $this->view([], 400);
         }
 
-        $view = $this->view([], 204);
-        return $view;
+        return $this->view([], 204);
     }
 
 
@@ -688,8 +665,6 @@ class RestApiController extends BaseController
      *  }
      * )
      *
-     * Description: Remove payment method.
-     *
      * @Security("is_granted('ROLE_SUPER_ADMIN')")
      *
      * @ParamConverter(name="id", class="AppBundle:PaymentMethod")
@@ -700,16 +675,14 @@ class RestApiController extends BaseController
      */
     public function removePaymentMethodAction(PaymentMethod $paymentMethod)
     {
-        $saleManager = $this->get('sale_manager');
+        $financialManager = $this->get('financial_manager');
         try {
-            $saleManager->remove($paymentMethod);
+            $financialManager->remove($paymentMethod);
         } catch (Exception $e) {
-            $view = $this->view([], 400);
-            return $view;
+            return $this->view([], 400);
         }
 
-        $view = $this->view([], 204);
-        return $view;
+        return $this->view([], 204);
     }
 
 
@@ -721,8 +694,6 @@ class RestApiController extends BaseController
      *     403 = "Returned when unauthorized",
      *     404 = "Returned when repair or status is invalid"
      *   })
-     *
-     * Description: Set repair status.
      *
      * @Security("is_granted('ROLE_WORKER')")
      *
@@ -738,17 +709,17 @@ class RestApiController extends BaseController
      * @param Status $status
      * @param ParamFetcher $paramFetcher
      * @return \FOS\RestBundle\View\View
+     * @throws \LogicException
      */
     public function setRepairStatusAction(Repair $repair, Status $status, ParamFetcher $paramFetcher)
     {
-        $repairManager = $this->get('repair_manager');
-        $emailManager = $this->get('email_manager');
-
         $inputMessage = $paramFetcher->get('message');
         $appendMessageToConfirmEmail = $paramFetcher->get('appendMessageToEmail');
-
         /** @var User $worker */
         $worker = $this->getUser();
+
+        $repairManager = $this->get('repair_manager');
+        $emailManager = $this->get('email_manager');
 
         $em = $this->getDoctrine()->getManager();
         $em->beginTransaction();
@@ -811,14 +782,13 @@ class RestApiController extends BaseController
      *     403 = "Returned when unauthorized"
      *   })
      *
-     * Description: Change repair start localization.
-     *
      * @Security("is_granted('ROLE_SUPER_ADMIN')")
      *
      * @Rest\Patch("/localizations/{localization}/repair/{repair}", name="edit_repair_start_localization")
      * @param Repair $repair
      * @param Localization $localization
      * @return Response
+     * @throws \LogicException
      */
     public function updateRepairStartLocalizationAction(Repair $repair, Localization $localization)
     {
@@ -841,6 +811,7 @@ class RestApiController extends BaseController
             $em->commit();
         } catch (\Exception $e) {
             $em->rollback();
+            return $this->view([], 400);
         }
 
         return $this->view([], 204);
@@ -857,19 +828,17 @@ class RestApiController extends BaseController
      *     403 = "Returned when unauthorized"
      *   })
      *
-     * Description: Change repair cost localization.
-     *
      * @Security("is_granted('ROLE_SUPER_ADMIN')")
      *
      * @Rest\Patch("/localizations/{localization}/repair-cost/{repairCost}", name="edit_repair_cost_localization")
      * @param RepairCost $repairCost
      * @param Localization $localization
      * @return Response
+     * @throws \LogicException
      */
     public function updateRepairCostLocalizationAction(RepairCost $repairCost, Localization $localization)
     {
         $repairCost->setLocalization($localization);
-
         $em = $this->getDoctrine()->getManager();
         $em->persist($repairCost);
         $em->flush();
@@ -887,8 +856,6 @@ class RestApiController extends BaseController
      *     404 = "Returned when invalid request"
      *   })
      *
-     * Description: Change repairer.
-     *
      * @Security("is_granted('ROLE_PERMISSION_CHANGE_REPAIRER')")
      *
      * @ParamConverter(name="repair", class="AppBundle:Repair")
@@ -903,11 +870,11 @@ class RestApiController extends BaseController
      * @param User $newRepairer
      * @param ParamFetcher $paramFetcher
      * @return \FOS\RestBundle\View\View
+     * @throws \LogicException
      */
     public function changeRepairerAction(Repair $repair, User $newRepairer, ParamFetcher $paramFetcher)
     {
         $additionalMessage = $paramFetcher->get('message');
-
         /** @var User $worker */
         $worker = $this->getUser();
 
@@ -937,6 +904,7 @@ class RestApiController extends BaseController
             $em->commit();
         } catch (\Exception $e) {
             $em->rollback();
+            return $this->view([], 400);
         }
 
         return $this->view([], 204);
@@ -952,17 +920,16 @@ class RestApiController extends BaseController
      *     403 = "Returned when unauthorized"
      *   })
      *
-     * @RequestParam(name="paymentMethodSelect", allowBlank=false, nullable=false, strict=true, requirements="\d+", description="Repair payment method")
-     *
-     * Description: Edit repair payment method.
-     *
      * @Security("is_granted('ROLE_WORKER')")
+     *
+     * @RequestParam(name="paymentMethodSelect", allowBlank=false, nullable=false, strict=true, requirements="\d+", description="Repair payment method")
      *
      * @Rest\Patch("/repair/{id}/payment-method", name="edit_repair_payment_method")
      * @param ParamFetcher $paramFetcher
      * @param Repair $repair
      * @throws AccessDeniedHttpException
      * @return Response
+     * @throws \LogicException
      */
     public function editRepairPaymentMethodAction(ParamFetcher $paramFetcher, Repair $repair)
     {
@@ -976,8 +943,9 @@ class RestApiController extends BaseController
             throw new AccessDeniedHttpException();
         }
 
-        $repair->setPaymentMethod($this->get('sale_manager')->getPaymentMethodById($paymentMethodSelect));
-        $this->get('repair_manager')->save($repair);
+        $financialManager = $this->get('financial_manager');
+        $repair->setPaymentMethod($financialManager->getPaymentMethodById($paymentMethodSelect));
+        $financialManager->save($repair);
 
         return $this->view([], 204);
     }
@@ -992,8 +960,6 @@ class RestApiController extends BaseController
      *     404 = "Returned when not found"
      *   })
      *
-     * Description: Get worker order history.
-     *
      * @Security("is_granted('ROLE_WORKER')")
      *
      * @ParamConverter(name="workerOrder", class="AppBundle:WorkerOrder")
@@ -1005,10 +971,9 @@ class RestApiController extends BaseController
      */
     public function getWorkerOrderHistoryAction(WorkerOrder $workerOrder)
     {
-        $serializer = $this->get('serializer');
-
         $workerOrderChangelog = $this->get('changelog_manager')->getChangelog($workerOrder);
 
+        $serializer = $this->get('serializer');
         $response = $serializer->serialize($workerOrderChangelog, 'json', SerializationContext::create()->enableMaxDepthChecks());
 
         return $this->view($response, 200);
@@ -1023,8 +988,6 @@ class RestApiController extends BaseController
      *     404 = "Returned when worker order or status is invalid"
      *   })
      *
-     * Description: Set worker order status.
-     *
      * @Security("is_granted('ROLE_WORKER')")
      *
      * @ParamConverter(name="workerOrder", class="AppBundle:WorkerOrder")
@@ -1034,6 +997,7 @@ class RestApiController extends BaseController
      * @param WorkerOrder $workerOrder
      * @param WorkerOrderStatus $workerOrderStatus
      * @return \FOS\RestBundle\View\View
+     * @throws \LogicException
      */
     public function setWorkerOrderStatusAction(WorkerOrder $workerOrder, WorkerOrderStatus $workerOrderStatus)
     {
@@ -1056,8 +1020,6 @@ class RestApiController extends BaseController
      *   }
      * )
      *
-     * Description: Update worker odrer content.
-     *
      * @Security("is_granted('ROLE_WORKER')")
      *
      * @ParamConverter(name="workerOrder", class="AppBundle:WorkerOrder")
@@ -1069,6 +1031,7 @@ class RestApiController extends BaseController
      * @param ParamFetcher $paramFetcher
      * @param WorkerOrder $workerOrder
      * @return Response
+     * @throws \LogicException
      */
     public function updateWorkerOrderContentAction(ParamFetcher $paramFetcher, WorkerOrder $workerOrder)
     {
@@ -1095,8 +1058,6 @@ class RestApiController extends BaseController
      *   }
      * )
      *
-     * Description: Remove worker order.
-     *
      * @Security("is_granted('ROLE_WORKER')")
      *
      * @ParamConverter(name="id", class="AppBundle:WorkerOrder")
@@ -1104,6 +1065,7 @@ class RestApiController extends BaseController
      * @Rest\Delete("/worker-order/{id}", name="remove_worker_order")
      * @param WorkerOrder $workerOrder
      * @return Response
+     * @throws \LogicException
      * @internal param RepairCostKind $repairCostKind
      */
     public function removeWorkerOrderAction(WorkerOrder $workerOrder)

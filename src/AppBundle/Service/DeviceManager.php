@@ -95,8 +95,7 @@ class DeviceManager
         return $isValid;
     }
 
-    public
-    function save($preparedData)
+    public function save($preparedData)
     {
         $this->em->persist($preparedData);
         $this->em->flush();

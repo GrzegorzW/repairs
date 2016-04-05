@@ -405,6 +405,8 @@ class RepairManager
         $repairCostKind = new RepairCostKind();
         $repairCostKind->setName($name);
         $repairCostKind->setType($type);
+        
+        $this->save($repairCostKind);
 
         return $repairCostKind;
     }
