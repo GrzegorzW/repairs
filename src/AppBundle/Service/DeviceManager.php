@@ -184,53 +184,38 @@ class DeviceManager
         return $isValid;
     }
 
-    public function getDevicesQuery(Request $request, User $repairer)
+    public function getDevicesQuery($phrase, User $worker)
     {
-        $phrase = $request->query->get('findDevices_phrase');
-
-        $query = $this->deviceRepository->createQueryBuilder('device')
-            ->leftJoin('device.custom_fields', 'custom_fields')
-            ->leftJoin('custom_fields.custom_field_template', 'custom_field_template')
-            ->leftJoin('custom_field_template.custom_field_template_values', 'custom_field_template_values')
-            ->leftJoin('device.repairs', 'repairs')
+        $qb = $this->deviceRepository->createQueryBuilder('device')
             ->orderBy('device.id', 'DESC');
 
-        if ($phrase) {
-            $this->getPhraseQueryPart($query, $phrase);
-        }
-        $this->getRoleQueryPart($query, $repairer);
-        $query = $query->getQuery();
-
-        return $query;
-
-    }
-
-    public function getPhraseQueryPart(QueryBuilder $query, $phrase)
-    {
-        return $query = $query
-            ->where('device.brand LIKE :phrase')
-            ->orWhere('device.model LIKE :phrase')
-            ->orWhere('device.serial LIKE :phrase')
-            ->orWhere('custom_fields.value LIKE :phrase')
-            ->orWhere('custom_field_template_values.name LIKE :phrase')
-            ->setParameter('phrase', '%' . trim($phrase) . '%');
-    }
-
-    public function getRoleQueryPart(QueryBuilder $query, User $repairer)
-    {
-        if ($repairer->hasRole('ROLE_SUPER_ADMIN') || $repairer->hasRole('ROLE_PERMISSION_ALL_DEVICES')) {
-            return $query;
+        if (null !== $phrase) {
+            $qb
+                ->leftJoin('device.custom_fields', 'custom_fields')
+                ->leftJoin('custom_fields.custom_field_template', 'custom_field_template')
+                ->leftJoin('custom_field_template.custom_field_template_values', 'custom_field_template_values')
+                ->where('device.brand LIKE :phrase')
+                ->orWhere('device.model LIKE :phrase')
+                ->orWhere('device.serial LIKE :phrase')
+                ->orWhere('custom_fields.value LIKE :phrase')
+                ->orWhere('custom_field_template_values.name LIKE :phrase')
+                ->setParameter('phrase', '%' . trim($phrase) . '%');
         }
 
-        if ($repairer->hasRole('ROLE_PERMISSION_LOCALIZATION_DEVICES')) {
-            return $query = $query
-                ->andWhere('repairs.start_localization = :localization')
-                ->setParameter('localization', $repairer->getLocalization());
+        if (false === $worker->hasRole('ROLE_SUPER_ADMIN') && false === $worker->hasRole('ROLE_PERMISSION_ALL_DEVICES')) {
+            $qb->leftJoin('device.repairs', 'repairs');
+            if ($worker->hasRole('ROLE_PERMISSION_LOCALIZATION_DEVICES')) {
+                $qb
+                    ->andWhere('repairs.start_localization = :localization')
+                    ->setParameter('localization', $worker->getLocalization());
+            } else {
+                $qb
+                    ->andWhere('repairs.current_repairer = :repairer')
+                    ->setParameter('repairer', $worker);
+            }
         }
 
-        return $query = $query
-            ->andWhere('repairs.current_repairer = :repairer')
-            ->setParameter('repairer', $repairer);
+        return $qb->getQuery();
     }
 
     public function createDeviceAltId()

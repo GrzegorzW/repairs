@@ -26,21 +26,13 @@ class WorkerOrderManager
 
     public function getOrdersQuery()
     {
-        return $query = $this->workerOrderRepository->createQueryBuilder('wo')
+        return $this->workerOrderRepository->createQueryBuilder('wo')
             ->join('wo.author', 'user')
             ->join('wo.status', 'status')
             ->where('wo.visible = :condition')
             ->setParameter('condition', true)
             ->orderBy('wo.created', 'DESC')
             ->getQuery();
-    }
-
-    public function createWorkerOrder()
-    {
-        $workerOrder = new WorkerOrder();
-        $workerOrder->setStatus($this->getOrderStatus(WorkerOrderStatus::ORDER_TO_ORDER));
-
-        return $workerOrder;
     }
 
     public function getOrderStatus($id)
@@ -50,7 +42,7 @@ class WorkerOrderManager
 
     public function getAllStatuses()
     {
-        return $query = $this->workerOrderStatusRepository->createQueryBuilder('wos')
+        return $this->workerOrderStatusRepository->createQueryBuilder('wos')
             ->orderBy('wos.sequence', 'ASC')
             ->getQuery()
             ->getResult();

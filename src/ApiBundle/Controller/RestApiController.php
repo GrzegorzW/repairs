@@ -50,16 +50,12 @@ class RestApiController extends BaseController
      *   }
      * )
      *
-     * Description: Remove custom field template.
-     *
      * @Security("is_granted('ROLE_SUPER_ADMIN')")
      *
      * @Rest\Delete("/admin/management/custom-field-templates/{customFieldTemplate}", name="remove_custom_field_template")
      * @param CustomFieldTemplate $customFieldTemplate
      * @return Response
-     * @internal param CustomFieldTemplate $fieldTemplate
-     * @internal param ParamFetcher $paramFetcher
-     * @internal param CustomFieldTemplate $customFieldTemplate
+     * @throws \LogicException
      */
     public function removeDeviceTypeTemplateAction(CustomFieldTemplate $customFieldTemplate)
     {
@@ -83,15 +79,12 @@ class RestApiController extends BaseController
      *   }
      * )
      *
-     * Description: Remove device type.
-     *
      * @Security("is_granted('ROLE_SUPER_ADMIN')")
      *
      * @Rest\Delete("/admin/management/device-type/{deviceType}", name="remove_device_type")
      * @param DeviceType $deviceType
      * @return Response
-     * @internal param ParamFetcher $paramFetcher
-     * @internal param CustomFieldTemplate $customFieldTemplate
+     * @throws \LogicException
      */
     public function removeDeviceTypeAction(DeviceType $deviceType)
     {
@@ -115,11 +108,9 @@ class RestApiController extends BaseController
      *   }
      * )
      *
-     * Description: Create device type custom field template.
-     *
      * @RequestParam(name="customFieldName", nullable=false, allowBlank=false, strict=true, description="Custom field template name")
      * @RequestParam(name="customFieldRequired", default="0", requirements="[0-1]", description="Is custom field template required")
-     * @RequestParam(name="customFieldTypeSelect", allowBlank=false, nullable=false, strict=true, requirements="\d+", description="Custom field template type")
+     * @RequestParam(name="customFieldTypeSelect", allowBlank=false, nullable=false, strict=true, requirements="[1|2]", description="Custom field template type")
      * @RequestParam(map=true, name="customFieldOptions", description="Custom field template options values")
      *
      * @Security("is_granted('ROLE_SUPER_ADMIN')")

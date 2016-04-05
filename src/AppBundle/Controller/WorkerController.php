@@ -9,6 +9,7 @@ use AppBundle\Entity\Repair;
 use AppBundle\Entity\RepairCost;
 use AppBundle\Entity\User;
 use AppBundle\Entity\WorkerOrder;
+use AppBundle\Entity\WorkerOrderStatus;
 use AppBundle\Form\OrderType;
 use AppBundle\Form\RepairPricingType;
 use AppBundle\Form\RepairType;
@@ -344,10 +345,8 @@ class WorkerController extends Controller
      */
     public function opinionsAction()
     {
-        $allOpinions = $this->get('repair_manager')->getAllOpinions();
-
         return [
-            'pagination' => $this->get('pagination_manager')->myPagination($allOpinions)
+            'pagination' => $this->get('pagination_manager')->myPagination($this->get('repair_manager')->getRepairsWithOpinions())
         ];
     }
 
@@ -365,17 +364,15 @@ class WorkerController extends Controller
     public function usersAction(Request $request)
     {
         $userManager = $this->get('user_manager');
-        $paginationManager = $this->get('pagination_manager');
 
-        if (($request->query->get('phrase'))) {
-            $searchedRows = $userManager->findClientByPhrase($request->query->get('phrase'));
-            $pagination = $paginationManager->myPagination($searchedRows);
+        if ($phrase = $request->query->get('phrase')) {
+            $dataToPaginate = $userManager->findClientByPhrase($phrase);
         } else {
-            $pagination = $paginationManager->myPagination($userManager->getClients());
+            $dataToPaginate = $userManager->getClients();
         }
 
         return [
-            'pagination' => $pagination
+            'pagination' => $this->get('pagination_manager')->myPagination($dataToPaginate)
         ];
     }
 
@@ -434,8 +431,7 @@ class WorkerController extends Controller
     {
         $workerOrderManager = $this->get('worker_order_manager');
 
-        /** @var WorkerOrder $workerOrder */
-        $workerOrder = $workerOrderManager->createWorkerOrder();
+        $workerOrder = new WorkerOrder($workerOrderManager->getOrderStatus(WorkerOrderStatus::ORDER_TO_ORDER));
         $formOrder = $this->createForm(new OrderType(), $workerOrder);
 
         if ($formOrder->handleRequest($request)->isValid()) {
@@ -446,11 +442,8 @@ class WorkerController extends Controller
             return $this->redirectToRoute('worker_orders');
         }
 
-        $searchingQuery = $workerOrderManager->getOrdersQuery();
-        $pagination = $this->get('pagination_manager')->myPagination($searchingQuery);
-
         return [
-            'pagination' => $pagination,
+            'pagination' => $this->get('pagination_manager')->myPagination($workerOrderManager->getOrdersQuery()),
             'formOrder' => $formOrder->createView(),
             'statuses' => $workerOrderManager->getAllStatuses()
         ];
@@ -469,13 +462,10 @@ class WorkerController extends Controller
      */
     public function devicesAction(Request $request)
     {
-        $deviceManager = $this->get('device_manager');
-
-        $searchingQuery = $deviceManager->getDevicesQuery($request, $this->getUser());
-        $pagination = $this->get('pagination_manager')->myPagination($searchingQuery);
+        $searchingQuery = $this->get('device_manager')->getDevicesQuery($request->get('phrase'), $this->getUser());
 
         return [
-            'pagination' => $pagination,
+            'pagination' => $this->get('pagination_manager')->myPagination($searchingQuery),
         ];
     }
 

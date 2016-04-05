@@ -9,11 +9,11 @@
     {% include 'AppBundle::alerts.html.twig' %}
 
     <form method="get" name="findDevices">
-        <label class="control-label" for="findDevices_phrase">Szukana fraza</label>
+        <label class="control-label" for="phrase">Szukana fraza</label>
         <input type="text" placeholder="np. marka, model, s/n..."
-               class="form-control" name="findDevices_phrase" style="margin-bottom: 15px;" autofocus
-                {% if app.request.get('findDevices_phrase') is not empty %}
-                    value="{{ app.request.get('findDevices_phrase') }}"
+               class="form-control" name="phrase" style="margin-bottom: 15px;" autofocus
+                {% if app.request.get('phrase') is not empty %}
+                    value="{{ app.request.get('phrase') }}"
                 {% endif %}
         />
         <a href="{{ path(app.request.get('_route')) }}" class="btn btn-danger btn-sm">Reset</a>

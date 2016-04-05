@@ -63,45 +63,30 @@ class RepairManager
         $this->authorizationChecker = $authorizationChecker;
     }
 
-    public function getRepairById($id)
-    {
-        return $this->repairRepository->findOneBy(['id' => $id]);
-    }
+//    public function getRepairById($id)
+//    {
+//        return $this->repairRepository->findOneBy(['id' => $id]);
+//    }
 
-    public function getUserRepairs(User $user)
-    {
-        return $this->repairRepository->findBy(['user' => $user]);
-    }
+//    public function getUserRepairs(User $user)
+//    {
+//        return $this->repairRepository->findBy(['user' => $user]);
+//    }
 
     public function getUserRepairWithOpinionFlag(User $user)
     {
         return $this->repairRepository->findOneBy(['add_opinion_flag' => 1, 'user' => $user]);
     }
 
-    public function getAllOpinions()
+    public function getRepairsWithOpinions()
     {
-        $repairWithOpinion = $this->repairRepository->createQueryBuilder('r')
+        return $this->repairRepository->createQueryBuilder('r')
             ->where('r.opinion IS NOT NULL')
             ->orderBy('r.opinion_date', 'DESC')
             ->getQuery()
             ->getResult();
-
-        return $repairWithOpinion;
     }
-
-    // todo useful for history repairs
-
-    public function getRepairsHistoryByRepairer(User $repairer)
-    {
-        return $this->repairRepository->createQueryBuilder('r')
-            ->join('r.repairers', 'repairers')
-            ->where('repairers.user = :repairer')
-            ->setParameter('repairer', $repairer)
-            ->addOrderBy('r.id', 'DESC')
-            ->getQuery()
-            ->getResult();
-    }
-
+    
     public function getActiveRepairsDESC()
     {
         $repairs = $this->repairRepository->createQueryBuilder('r')
@@ -299,13 +284,11 @@ class RepairManager
         $qb = $this->repairRepository->createQueryBuilder('r')
             ->addSelect('u')
             ->leftJoin('r.user', 'u')
-            ->leftJoin('r.current_status', 's')
-            ->leftJoin('r.current_repairer', 'current_repairer')
-            ->leftJoin('r.device', 'device')
             ->orderBy('r.startDate', 'DESC');
 
-        if ($phrase) {
+        if (null !== $phrase) {
             $qb
+                ->leftJoin('r.device', 'device')
                 ->where('r.alt_id LIKE :phrase')
                 ->orWhere('device.brand LIKE :phrase')
                 ->orWhere('device.model LIKE :phrase')
@@ -317,6 +300,8 @@ class RepairManager
                 ->setParameter('phrase', '%' . trim($phrase) . '%');
         }
         if ($status !== Status::STATUS_ALL_REPAIRS) {
+            $qb->leftJoin('r.current_status', 's');
+
             if ($status === Status::STATUS_ACTIVE_REPAIR) {
                 $qb
                     ->andWhere('s.id != :statusId')
@@ -328,8 +313,7 @@ class RepairManager
                     ->setParameter('statusId', $status);
             }
         }
-//        todo poprawic logike
-        if (false === $worker->hasRole('ROLE_SUPER_ADMIN') xor false === $worker->hasRole('ROLE_PERMISSION_ALL_REPAIRS')) {
+        if (false === $worker->hasRole('ROLE_SUPER_ADMIN') && false === $worker->hasRole('ROLE_PERMISSION_ALL_REPAIRS')) {
             if ($worker->hasRole('ROLE_PERMISSION_LOCALIZATION_REPAIRS')) {
                 $qb
                     ->andWhere('r.start_localization = :localization')
@@ -340,8 +324,9 @@ class RepairManager
                     ->setParameter('repairer', $worker);
             }
         }
-        if ($currentRepairer) {
+        if (User::ALL_REPAIRERS !== $currentRepairer) {
             $qb
+                ->leftJoin('r.current_repairer', 'current_repairer')
                 ->andWhere('current_repairer.id = :repairer_id')
                 ->setParameter('repairer_id', $currentRepairer);
         }
@@ -630,11 +615,6 @@ class RepairManager
         }
 
         return $descriptions;
-    }
-
-    public function createDevice(array $params)
-    {
-
     }
 
 }

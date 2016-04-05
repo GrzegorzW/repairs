@@ -15,13 +15,17 @@ class OrderType extends AbstractType
     {
         $builder->add('description', TextareaType::class, [
             'label' => false,
-            'constraints' => [new Assert\NotBlank()],
+            'constraints' => [
+                new Assert\NotBlank()
+            ]
         ]);
 
         $builder->add('href', UrlType::class, [
             'label' => false,
             'required' => false,
-            'constraints' => [new Assert\Url()],            
+            'constraints' => [
+                new Assert\Url()
+            ]          
         ]);
     }
 

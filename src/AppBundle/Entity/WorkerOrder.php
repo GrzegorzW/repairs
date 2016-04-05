@@ -78,9 +78,10 @@ class WorkerOrder
      */
     private $visible;
 
-    public function __construct()
+    public function __construct(WorkerOrderStatus $status)
     {
         $this->visible = true;
+        $this->status = $status;
     }
 
     /**

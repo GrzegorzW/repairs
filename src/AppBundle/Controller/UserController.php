@@ -32,10 +32,10 @@ class UserController extends Controller
     {
         $repairManager = $this->get('repair_manager');
 
-        /** @var User $user */
-        $user = $this->getUser();
+        /** @var User $client */
+        $client = $this->getUser();
         /** @var Repair $repairWithAddOpinionFlag */
-        $repairWithAddOpinionFlag = $repairManager->getUserRepairWithOpinionFlag($user);
+        $repairWithAddOpinionFlag = $repairManager->getUserRepairWithOpinionFlag($client);
 
         if ($repairWithAddOpinionFlag) {
             $addOpinionUrl = $this->generateUrl('pokwitowanie_user_panel_details', ['id' => $repairWithAddOpinionFlag->getId()]);
@@ -43,24 +43,22 @@ class UserController extends Controller
             $repairManager->save($repairWithAddOpinionFlag);
         }
 
-        if (false === $user->getFirstLoginModalRendered()) {
-            $user->setFirstLoginModalRendered(true);
-            $repairManager->save($user);
+        if (false === $client->getFirstLoginModalRendered()) {
+            $client->setFirstLoginModalRendered(true);
+            $repairManager->save($client);
             $renderFirstLoginModal = true;
         }
 
-        $formEditUser = $this->createForm(ClientSideUserType::class, $user);
+        $formEditUser = $this->createForm(ClientSideUserType::class, $client);
         if ($formEditUser->handleRequest($request)->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($user);
-            $em->flush();
+            $repairManager->save($client);
 
             $this->addFlash('success', $this->get('translator')->trans('flashClientSideUserDataChanged'));
             return $this->redirectToRoute('pokwitowanie_user_panel');
         }
         
         return [
-            'user' => $user,
+            'user' => $client,
             'formEditUser' => $formEditUser->createView(),
             'addOpinionUrl' => isset($addOpinionUrl) ? $addOpinionUrl : null,
             'renderFirstLoginModal' => isset($renderFirstLoginModal)
@@ -83,10 +81,10 @@ class UserController extends Controller
      */
     public function repairDetailsAction(Request $request, Repair $repair)
     {
-        /** @var User $user */
-        $user = $this->getUser();
+        /** @var User $client */
+        $client = $this->getUser();
 
-        if ($user !== $repair->getUser()) {
+        if ($client !== $repair->getUser()) {
             $this->addFlash('error', $this->get('translator')->trans('flashNoRepair'));
             return $this->redirectToRoute('pokwitowanie_user_panel');
         }
@@ -98,8 +96,8 @@ class UserController extends Controller
 
         if ($formNewUserMessage->handleRequest($request)->isValid()) {
             $newUserMessage->setType(Message::TYPE_PUBLIC);
-            $message = $this->get('communication_manager')->sendMessage($user, $repair, $newUserMessage);
-            $this->get('notification_manager')->addNewMessageNotifications($message, $user);
+            $message = $this->get('communication_manager')->sendMessage($client, $repair, $newUserMessage);
+            $this->get('notification_manager')->addNewMessageNotifications($message, $client);
 
             $this->addFlash('success', $this->get('translator')->trans('flashMessageAdded'));
             return $this->redirectToRoute('pokwitowanie_user_panel_details', ['id' => $repair->getId()]);
