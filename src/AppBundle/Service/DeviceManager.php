@@ -239,10 +239,9 @@ class DeviceManager
         $value = $customField->getValue();
 
         if ($value) {
+            $name = $value;
             if ($customFieldTemplate->getType() === CustomFieldTemplate::FIELD_TYPE_CHOICE) {
                 $name = $this->getCustomFieldTemplateValueById($value)->getName();
-            } else {
-                $name = $value;
             }
         }
 

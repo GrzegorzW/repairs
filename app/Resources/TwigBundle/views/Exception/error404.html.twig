@@ -1,9 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-    {#todo#}
-    {#<link rel="shortcut icon" href="{{ asset('bundles/app/images/mf-small-logo.png') }}">#}
-    <link rel="shortcut icon" href="{{ asset('bundles/app/images/favicon.ico') }}">
+    <link rel="shortcut icon" href="
+    {% if app.user.localization.company.smallLogoFile is not null %}
+        {{ asset(vich_uploader_asset(app.user.localization.company, 'smallLogoFile')) }}
+    {% else %}
+        {{ asset('bundles/app/images/favicon.ico') }}
+    {% endif %}
+    ">
     <meta charset="utf-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
     <title>Nie zlaziono tej strony.</title>
@@ -34,7 +38,15 @@
     {#{% endimage %}#}
 
     {#<img src="{{ asset('bundles/app/images/mf-logo.png') }}" style="padding-bottom: 40px;"/>#}
-    <img src="{{ asset('bundles/app/images/logo1.jpg') }}" style="padding-bottom: 40px;"/>
+    {#<img src="{{ asset('bundles/app/images/logo1.jpg') }}" style="padding-bottom: 40px;"/>#}
+{#todo nie favicon...#}
+    <img style="padding-bottom: 40px;" src="
+    {% if app.user.localization.company.smallLogoFile is not null %}
+        {{ asset(vich_uploader_asset(app.user.localization.company, 'logoFile')) }}
+    {% else %}
+        {{ asset('bundles/app/images/favicon.ico') }}
+    {% endif %}
+    ">
 
     <div class="alert alert-danger">
         Ups, coś poszło nie tak.
