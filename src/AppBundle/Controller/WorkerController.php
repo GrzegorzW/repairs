@@ -197,14 +197,17 @@ class WorkerController extends Controller
      */
     public function addUserAction(Request $request)
     {
-        $userManager = $this->get('user_manager');
-
+        $userManager = $this->get('user_manager');     
+        
         if ($request->query->has('findUserPhrase')) {
             $searchedPhrases = $userManager->findClientByPhrase($request->query->get('findUserPhrase'));
             $pagination = $this->get('pagination_manager')->myPagination($searchedPhrases);
         }
 
-        $user = new User();
+        /** @var Localization $localization */
+        $localization = $this->getUser()->getLocalization();
+        
+        $user = new User($localization);
         $formAddUser = $this->createForm(UserType::class, $user);
 
         if ($formAddUser->handleRequest($request)->isValid()) {

@@ -24,17 +24,13 @@
                 {{ repair.localizationCity }}, {{ repair.repairStartDate | date('d.m.Y') }}
             </div>
 
-            <div id="logo" style="max-width: 150px;">
-                <img src="
-                {% if app.user.localization.company.logoFile is not empty %}
-                    {{ asset(vich_uploader_asset(app.user.localization.company, 'logoFile')) }}
-                {% else %}
-                    {#{{ asset('bundles/app/images/mf-logo.png') }}#}
-                    {{ asset('bundles/app/images/favicon.ico') }}
-                {% endif %}
-                "/>
-
-            </div>
+            {% if app.user.localization.company.logoFile is not empty %}
+                <div id="logo" style="max-width: 150px;">
+                    <img src="
+                        {{ asset(vich_uploader_asset(app.user.localization.company, 'logoFile')) }}
+                    "/>
+                </div>
+            {% endif %}
         </div>
     </div>
     <div class="row" style="margin-top: 10px;">
@@ -50,34 +46,34 @@
                 {% spaceless %}
                     <p>{{ repair.clientName | trim }} {{ repair.clientSurname | trim }}</p>
                     {% if repair.clientCompanyName %}
-                    <p>{{ repair.clientCompanyName | trim }}</p>
-                {% endif %}
+                        <p>{{ repair.clientCompanyName | trim }}</p>
+                    {% endif %}
                     {% if repair.clientCompanyAddress %}
-                    <p>ul. {{ repair.clientCompanyAddress | trim }}</p>
-                {% endif %}
+                        <p>ul. {{ repair.clientCompanyAddress | trim }}</p>
+                    {% endif %}
                     <p>
-                    {% if repair.clientCompanyPostCode %}
-                        {{ repair.clientCompanyPostCode | trim }}
-                    {% endif %}
-                    {% if repair.clientCompanyCity %}
-                        {{ repair.clientCompanyCity | trim }}
-                    {% endif %}
-                </p>
+                        {% if repair.clientCompanyPostCode %}
+                            {{ repair.clientCompanyPostCode | trim }}
+                        {% endif %}
+                        {% if repair.clientCompanyCity %}
+                            {{ repair.clientCompanyCity | trim }}
+                        {% endif %}
+                    </p>
                     {% if repair.clientCompanyNIP %}
-                    <p>NIP: {{ repair.clientCompanyNIP | trim }}</p>
-                {% endif %}
+                        <p>NIP: {{ repair.clientCompanyNIP | trim }}</p>
+                    {% endif %}
                     <p>tel.: {{ phone_number_format(repair.clientTel) }}</p>
                     {% if repair.clientEmail %}
-                    <p>e-mail: {{ repair.clientEmail | trim }}</p>
-                {% endif %}
+                        <p>e-mail: {{ repair.clientEmail | trim }}</p>
+                    {% endif %}
                 {% endspaceless %}
             </div>
             <div class="sheet">
-            {% if repair.localizationStreet != repair.companyStreet %}
-                <p style="margin-top: 5px;"><strong>Siedziba:</strong></p>
-                <p>ul. {{ repair.localizationStreet }}</p>
-                <p>{{ repair.localizationPostCode }} {{ repair.localizationCity }}</p>
-            {% endif %}
+                {% if repair.localizationStreet != repair.companyStreet %}
+                    <p style="margin-top: 5px;"><strong>Siedziba:</strong></p>
+                    <p>ul. {{ repair.localizationStreet }}</p>
+                    <p>{{ repair.localizationPostCode }} {{ repair.localizationCity }}</p>
+                {% endif %}
                 <p>tel.: <u>{{ phone_number_format(repair.localizationTel1) }}</u>
                     {% if repair.localizationTel2 is not null %}
                         , {{ phone_number_format(repair.localizationTel2) }}

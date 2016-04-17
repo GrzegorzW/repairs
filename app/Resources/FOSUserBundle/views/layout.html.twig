@@ -29,38 +29,32 @@
                 e.style.display = 'block';
         }
     </script>
-
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-
 </head>
 <body style="background-image: url({{ asset('images/electronics.jpg') }})">
-
-<div class="container login-layout" style="padding-top: 230px; max-height: 150px; max-width: 300px;">
-    {% block pageContainer %}{% endblock %}
-    <div>
-        {% block fos_user_content %}
-        {% endblock fos_user_content %}
-    </div>
-
-    <div style="margin-top: 10px;">
-        {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-            <span style="color: white">{{ 'layout.logged_in_as'|trans({'%username%': app.user.username}, 'FOSUserBundle') }}</span> |
-            <a href="{{ path('fos_user_security_logout') }}">
-                {{ 'layout.logout'|trans({}, 'FOSUserBundle') }}
-            </a>
+    <div class="container login-layout" style="padding-top: 230px; max-height: 150px; max-width: 300px;">
+        {% block pageContainer %}{% endblock %}
+        <div>
+            {% block fos_user_content %}
+            {% endblock fos_user_content %}
+        </div>
+        <div style="margin-top: 10px;">
+            {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
+                <span style="color: white">{{ 'layout.logged_in_as'|trans({'%username%': app.user.username}, 'FOSUserBundle') }}</span> |
+                <a href="{{ path('fos_user_security_logout') }}">
+                    {{ 'layout.logout'|trans({}, 'FOSUserBundle') }}
+                </a>
+            {% endif %}
+        </div>
+        {% if app.request.hasPreviousSession %}
+            {% for type, messages in app.session.flashbag.all() %}
+                {% for message in messages %}
+                    <div class="flash-{{ type }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endfor %}
         {% endif %}
     </div>
-
-    {% if app.request.hasPreviousSession %}
-        {% for type, messages in app.session.flashbag.all() %}
-            {% for message in messages %}
-                <div class="flash-{{ type }}">
-                    {{ message }}
-                </div>
-            {% endfor %}
-        {% endfor %}
-    {% endif %}
-
-</div>
 </body>
 </html>

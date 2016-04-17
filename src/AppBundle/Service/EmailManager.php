@@ -31,7 +31,7 @@ class EmailManager
         $this->translator = $translator;
         $this->company = $entityManager->getRepository('AppBundle:Company')->findOneBy(['id' => Company::COMPANY_ID]);
     }
-//todo dodac nazwe wysylajacego?
+
     public function sendMail($to, $subject, $body = [], $twigTemplate)
     {
         $mail = \Swift_Message::newInstance()

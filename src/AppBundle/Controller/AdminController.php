@@ -218,12 +218,12 @@ class AdminController extends Controller
         /** @var User $superAdmin */
         $superAdmin = $this->getUser();
 
-        $worker = new User();
+        $worker = new User($localization);
         $formAddRepairer = $this->createForm(new RepairerType($userManager), $worker);
 
         if ($formAddRepairer->handleRequest($request)->isValid()) {
             try {
-                $userManager->createWorkerAccount($worker, $localization);
+                $userManager->createWorkerAccount($worker);
                 $this->get('email_manager')->sendMail(
                     $worker->getEmail(),
                     $superAdmin->getLocalization()->getCompany()->getEmailSubjectBegin() . ' ' . $this->get('translator')->trans('emailNewRepairer'),

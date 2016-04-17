@@ -142,7 +142,7 @@ class User extends BaseUser
 
     /**
      * @ORM\ManyToOne(targetEntity="AppBundle\Entity\Localization", inversedBy="employees")
-     * @JoinColumn(name="localization", referencedColumnName="id")
+     * @JoinColumn(name="localization", referencedColumnName="id", nullable=false)
      */
     private $localization;
 
@@ -211,12 +211,13 @@ class User extends BaseUser
      */
     private $responded_total_repair_pricings;
 
-    public function __construct()
+    public function __construct(Localization $localization)
     {
         parent::__construct();
         $this->enabled = true;
         $this->temp_pw_changed = false;
         $this->first_login_modal_rendered = false;
+        $this->localization = $localization;
 
         $this->repairs_history = new ArrayCollection();
         $this->repairs = new ArrayCollection();

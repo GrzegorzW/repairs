@@ -154,7 +154,7 @@ class UserManager
 
     public function createSuperadminUser($username, $password, $email, $name, $surname, $tel, $localization, $userToEdit)
     {
-        $user = $userToEdit ? $userToEdit : new User();
+        $user = $userToEdit ? $userToEdit : new User($localization);
 
         $user->setUsername($username);
         $user->setEmail($email);
@@ -167,7 +167,6 @@ class UserManager
         $user->setTel($tel);
         $user->setTempPw(0);
         $user->setTempPwChanged(1);
-        $user->setLocalization($localization);
 
         $user->addRole('ROLE_SUPER_ADMIN');
         $this->setAlternativeUserId($user);
@@ -266,9 +265,8 @@ class UserManager
         $this->userRepository = $userRepository;
     }
 
-    public function createWorkerAccount(User $worker, Localization $localization)
+    public function createWorkerAccount(User $worker)
     {
-        $worker->setLocalization($localization);
         $worker->addRole('ROLE_WORKER');
         $worker->setMarketingAgreement(false);
         $this->setAlternativeUserId($worker);
