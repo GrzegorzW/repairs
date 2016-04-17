@@ -16,7 +16,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 class Company
 {
     const COMPANY_ID = 1;
-
+    
     /**
      * @ORM\Id
      * @ORM\Column(type="integer")
@@ -78,20 +78,6 @@ class Company
      * @Assert\NotBlank()
      */
     private $email_subject_begin;
-    /**
-     * NOTE: This is not a mapped field of entity metadata, just a simple property.
-     *
-     * @Vich\UploadableField(mapping="company_small_logo", fileNameProperty="smallLogoName")
-     *
-     * @var File
-     */
-    private $smallLogoFile;
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     *
-     * @var string
-     */
-    private $smallLogoName;
     /**
      * @ORM\Column(type="datetime", nullable=true)
      *
@@ -255,51 +241,6 @@ class Company
     public function setEmailSubjectBegin($email_subject_begin)
     {
         $this->email_subject_begin = $email_subject_begin;
-    }
-
-    /**
-     * @return File
-     */
-    public function getSmallLogoFile()
-    {
-        return $this->smallLogoFile;
-    }
-
-    /**
-     * @param File|\Symfony\Component\HttpFoundation\File\UploadedFile $image
-     *
-     * @return Company
-     */
-    public function setSmallLogoFile(File $image = null)
-    {
-        $this->smallLogoFile = $image;
-
-        if ($image) {
-            // It is REQUIRED
-            $this->updatedAt = new \DateTime('now');
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getSmallLogoName()
-    {
-        return $this->smallLogoName;
-    }
-
-    /**
-     * @param string $smallLogoName
-     *
-     * @return Company
-     */
-    public function setSmallLogoName($smallLogoName)
-    {
-        $this->smallLogoName = $smallLogoName;
-
-        return $this;
     }
 
     /**

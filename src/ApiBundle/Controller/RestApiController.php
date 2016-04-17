@@ -766,7 +766,7 @@ class RestApiController extends BaseController
 
         } catch (\Exception $e) {
             $em->rollback();
-            return $this->view([], 403);
+            return $this->view([], 400);
         }
 
         return $this->view($response, 200);

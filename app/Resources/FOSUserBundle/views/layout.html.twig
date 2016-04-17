@@ -2,13 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8"/>
-    <link rel="shortcut icon" href="
-    {% if app.user.localization.company.smallLogoFile is not null %}
-        {{ asset(vich_uploader_asset(app.user.localization.company, 'smallLogoFile')) }}
-    {% else %}
-        {{ asset('bundles/app/images/favicon.ico') }}
-    {% endif %}
-    ">
+    <link rel="shortcut icon" href="{{ asset('images/gears.png') }}">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
     <title>Pokwitowanie{% block title %}{% endblock %}</title>
 
@@ -39,23 +33,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
 </head>
-<body>
-<div class="container login-layout" style="padding-top: 150px; max-height: 150px; max-width: 300px;">
-    {#{% image 'bundles/app/images/mf-logo.png' %}#}
-    {#{% image 'bundles/app/images/logo1.jpg' %}#}
-    {#todo#}
-    {#<a href="{{ absolute_url(company_service.company.mainSite) }}"><img src="{{ asset_url }}" style="margin-bottom: 40px;"/></a>#}
-    {#<a href="#"><img src="{{ asset_url }}" style="margin-bottom: 40px;"/></a>#}
-    {#{% endimage %}#}
+<body style="background-image: url({{ asset('images/electronics.jpg') }})">
 
-    <img src="
-    {% if app.user.localization.company.smallLogoFile is not null %}
-        {{ asset(vich_uploader_asset(app.user.localization.company, 'logoFile')) }}
-    {% else %}
-        {{ asset('bundles/app/images/favicon.ico') }}
-    {% endif %}
-    ">
-
+<div class="container login-layout" style="padding-top: 230px; max-height: 150px; max-width: 300px;">
     {% block pageContainer %}{% endblock %}
     <div>
         {% block fos_user_content %}
@@ -64,7 +44,7 @@
 
     <div style="margin-top: 10px;">
         {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-            {{ 'layout.logged_in_as'|trans({'%username%': app.user.username}, 'FOSUserBundle') }} |
+            <span style="color: white">{{ 'layout.logged_in_as'|trans({'%username%': app.user.username}, 'FOSUserBundle') }}</span> |
             <a href="{{ path('fos_user_security_logout') }}">
                 {{ 'layout.logout'|trans({}, 'FOSUserBundle') }}
             </a>
@@ -84,4 +64,3 @@
 </div>
 </body>
 </html>
-

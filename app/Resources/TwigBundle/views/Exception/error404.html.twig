@@ -1,13 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <link rel="shortcut icon" href="
-    {% if app.user.localization.company.smallLogoFile is not null %}
-        {{ asset(vich_uploader_asset(app.user.localization.company, 'smallLogoFile')) }}
-    {% else %}
-        {{ asset('bundles/app/images/favicon.ico') }}
-    {% endif %}
-    ">
+    <link rel="shortcut icon" href="{{ asset('images/gears.png') }}">
     <meta charset="utf-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
     <title>Nie zlaziono tej strony.</title>
@@ -29,29 +23,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
 </head>
-<body>
+<body style="background-image: url({{ asset('images/electronics.jpg') }})">
 
-<div class="container text-center" style="padding-top: 150px; max-width: 300px;">
-    {#todo#}
-    {#{% image '@AppBundle/Resources/public/images/logo1.jpg' %}#}
-    {#<a href="{{ company_service.getCompany.mainSite }}"><img src="{{ asset_url }}" style="padding-bottom: 40px;"/></a>#}
-    {#{% endimage %}#}
-
-    {#<img src="{{ asset('bundles/app/images/mf-logo.png') }}" style="padding-bottom: 40px;"/>#}
-    {#<img src="{{ asset('bundles/app/images/logo1.jpg') }}" style="padding-bottom: 40px;"/>#}
-{#todo nie favicon...#}
-    <img style="padding-bottom: 40px;" src="
-    {% if app.user.localization.company.smallLogoFile is not null %}
-        {{ asset(vich_uploader_asset(app.user.localization.company, 'logoFile')) }}
-    {% else %}
-        {{ asset('bundles/app/images/favicon.ico') }}
-    {% endif %}
-    ">
-
-    <div class="alert alert-danger">
-        Ups, coś poszło nie tak.
+<div class="container text-center" style="padding-top: 150px; max-width: 400px;">
+    <div class="jumbotron">
+        <h4>Ups, coś poszło nie tak.</h4>
+        <a href="{{ path('pokwitowanie_user_panel') }}" class="btn green">Przejdź do strony głównej</a>
     </div>
-    <a href="{{ path('pokwitowanie_user_panel') }}" class="btn green">Przejdź do strony głównej</a>
 </div>
 </body>
 </html>

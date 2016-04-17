@@ -3,6 +3,10 @@ img {
     height: auto;
 }
 
+#fos_user_change_password_form {
+    color: white;
+}
+
 tr {
     overflow: hidden;
 }

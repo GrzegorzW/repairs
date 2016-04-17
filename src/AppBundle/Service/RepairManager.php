@@ -86,7 +86,7 @@ class RepairManager
             ->getQuery()
             ->getResult();
     }
-    
+
     public function getActiveRepairsDESC()
     {
         $repairs = $this->repairRepository->createQueryBuilder('r')
@@ -284,11 +284,13 @@ class RepairManager
         $qb = $this->repairRepository->createQueryBuilder('r')
             ->addSelect('u')
             ->leftJoin('r.user', 'u')
+            ->leftJoin('r.device', 'device')
+            ->leftJoin('r.current_repairer', 'current_repairer')
+            ->leftJoin('r.current_status', 's')
             ->orderBy('r.startDate', 'DESC');
 
         if (null !== $phrase) {
             $qb
-                ->leftJoin('r.device', 'device')
                 ->where('r.alt_id LIKE :phrase')
                 ->orWhere('device.brand LIKE :phrase')
                 ->orWhere('device.model LIKE :phrase')
@@ -300,7 +302,6 @@ class RepairManager
                 ->setParameter('phrase', '%' . trim($phrase) . '%');
         }
         if ($status !== Status::STATUS_ALL_REPAIRS) {
-            $qb->leftJoin('r.current_status', 's');
 
             if ($status === Status::STATUS_ACTIVE_REPAIR) {
                 $qb
@@ -326,7 +327,6 @@ class RepairManager
         }
         if (User::ALL_REPAIRERS !== $currentRepairer) {
             $qb
-                ->leftJoin('r.current_repairer', 'current_repairer')
                 ->andWhere('current_repairer.id = :repairer_id')
                 ->setParameter('repairer_id', $currentRepairer);
         }
@@ -377,7 +377,7 @@ class RepairManager
 
         return count($dailyRepairs);
     }
-    
+
     public function addRepairersHistoryEntry(Repair $repair, User $user, User $author = null)
     {
         $editor = $user;
@@ -405,7 +405,7 @@ class RepairManager
         $repairCostKind = new RepairCostKind();
         $repairCostKind->setName($name);
         $repairCostKind->setType($type);
-        
+
         $this->save($repairCostKind);
 
         return $repairCostKind;

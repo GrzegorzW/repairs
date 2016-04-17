@@ -19,7 +19,7 @@
 
         <div class="checkbox">
             <label for="remember_me">
-                <input type="checkbox" id="password" value="on">{{ 'security.login.remember_me'|trans }}
+                <input type="checkbox" id="password" value="on"><span  style="color: white">{{ 'security.login.remember_me'|trans }}</span>
             </label>
         </div>
 
@@ -27,5 +27,5 @@
                 value="{{ 'security.login.submit'|trans }}">{{ 'security.login.submit'|trans }}</button>
     </form>
 
-    <a href="{{ path('fos_user_resetting_request') }}">Nie znasz hasła?</a>
+    <a href="{{ path('fos_user_resetting_request') }}" style="color: white" class="pull-right">Nie znasz hasła?</a>
 {% endblock pageContainer %}

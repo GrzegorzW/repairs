@@ -184,13 +184,6 @@ vich_uploader:
     db_driver: orm
     twig: true
     mappings:
-        company_small_logo:
-            namer: vich_uploader.namer_uniqid
-            uri_prefix: /uploads/companies/logos
-            upload_destination: %kernel.root_dir%/../web/uploads/companies/logos
-            delete_on_remove: true
-            directory_namer: ~
-            inject_on_load: true
         company_logo:
             namer: vich_uploader.namer_uniqid
             uri_prefix: /uploads/companies/logos
