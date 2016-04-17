@@ -1,6 +1,6 @@
 /app/config/parameters.yml
 /composer.phar
-/.idea
+.idea/*
 composer.lock
 /web/css/
 /web/js/
