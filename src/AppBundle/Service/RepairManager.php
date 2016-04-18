@@ -495,7 +495,7 @@ class RepairManager
 
         /** @var RepairCost $item */
         foreach ($repairCosts as $item) {
-            if ($item->getCostKind()->getId() === RepairCostKind::TYPE_PLUS) {
+            if ($item->getCostKind()->getType() === RepairCostKind::TYPE_PLUS) {
                 $totalPrice = $totalPrice->add($item->getPrice());
             }
         }
