@@ -77,7 +77,7 @@ class FinancialManager
 
         /** @var RepairCost $item */
         foreach ($repairCosts as $item) {
-            if ($item->getCostKind()->getId() === RepairCostKind::TYPE_PLUS) {
+            if ($item->getCostKind()->getType() === RepairCostKind::TYPE_PLUS) {
                 $price = $price->add($item->getPrice());
             }
         }
@@ -91,7 +91,7 @@ class FinancialManager
 
         /** @var RepairCost $item */
         foreach ($allRepairCost as $item) {
-            if ($item->getCostKind()->getId() !== RepairCostKind::TYPE_PLUS) {
+            if ($item->getCostKind()->getType() !== RepairCostKind::TYPE_PLUS) {
                 $cost = $cost->add($item->getPrice());
             }
         }
@@ -110,19 +110,19 @@ class FinancialManager
         foreach ($allRepairCosts as $repairCost) {
             if ($worker->getLocalization() === $repair->getStartLocalization()) {
                 if ($repairCost->getLocalization() === $repair->getStartLocalization()) {
-                    if ($repairCost->getCostKind()->getId() === RepairCostKind::TYPE_PLUS) {
+                    if ($repairCost->getCostKind()->getType() === RepairCostKind::TYPE_PLUS) {
                         $totalPrice = $totalPrice->add($repairCost->getPrice());
                     } else {
                         $totalCost = $totalCost->add($repairCost->getPrice());
                     }
                 } else {
-                    if ($repairCost->getCostKind()->getId() === RepairCostKind::TYPE_PLUS) {
+                    if ($repairCost->getCostKind()->getType() === RepairCostKind::TYPE_PLUS) {
                         $totalCost = $totalCost->add($repairCost->getPrice());
                     }
                 }
             } else {
                 if ($repairCost->getLocalization() !== $repair->getStartLocalization()) {
-                    if ($repairCost->getCostKind()->getId() === RepairCostKind::TYPE_PLUS) {
+                    if ($repairCost->getCostKind()->getType() === RepairCostKind::TYPE_PLUS) {
                         $totalPrice = $totalPrice->add($repairCost->getPrice());
                     } else {
                         $totalCost = $totalCost->add($repairCost->getPrice());

@@ -25,7 +25,7 @@ class TotalRepairPricingSubscriber implements EventSubscriber
         $entity = $args->getObject();
         $em = $args->getObjectManager();
 
-        if ($entity instanceof RepairCost && $entity->getCostKind()->getId() === RepairCostKind::TYPE_PLUS) {
+        if ($entity instanceof RepairCost && $entity->getCostKind()->getType() === RepairCostKind::TYPE_PLUS) {
             $this->updateTotalRepairPricingChangedFlag($entity);
             $em->persist($entity);
             $em->flush();
@@ -44,7 +44,7 @@ class TotalRepairPricingSubscriber implements EventSubscriber
         $entity = $args->getObject();
         $em = $args->getObjectManager();
 
-        if ($entity instanceof RepairCost && $entity->getCostKind()->getId() === RepairCostKind::TYPE_PLUS) {
+        if ($entity instanceof RepairCost && $entity->getCostKind()->getType() === RepairCostKind::TYPE_PLUS) {
             $this->updateTotalRepairPricingChangedFlag($entity);
             $em->persist($entity);
             $em->flush();

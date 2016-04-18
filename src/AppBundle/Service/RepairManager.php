@@ -535,7 +535,7 @@ class RepairManager
 
         /** @var RepairCost $item */
         foreach ($repairStatement as $item) {
-            if ($item->getCostKind()->getId() === RepairCostKind::TYPE_PLUS && $item->getLocalization() === $repair->getStartLocalization()) {
+            if ($item->getCostKind()->getType() === RepairCostKind::TYPE_PLUS && $item->getLocalization() === $repair->getStartLocalization()) {
                 $entries->add($item);
             }
         }
