@@ -48,9 +48,6 @@
                     <img alt="{{ company.mainSite }}" style="max-height: 100px; max-width: 200px;" src="
                     {% if app.user.localization.company.logoFile is not empty %}
                         {{ app.request.getUriForPath(vich_uploader_asset(company, 'logoFile')) }}
-                    {% else %}
-                        {#{{ absolute_url(asset('bundles/app/images/mf-logo.png')) }}#}
-                        {{ absolute_url(asset('bundles/app/images/favicon.ico')) }}
                     {% endif %}
                     "/>
                 </a>

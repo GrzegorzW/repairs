@@ -33,9 +33,20 @@ class LocalizationManager
         return $this->localizationRepository->findOneBy(['id' => $id]);
     }
 
-    public function getEmployeesByLocalizationId($id)
+    public function getEmployeesByLocalizationId(Localization $localization)
     {
-        return $this->localizationRepository->findOneBy(['id' => $id])->getEmployees();
+        $userRepository = $this->em->getRepository('AppBundle:User');
+
+        return $userRepository->createQueryBuilder('user')
+            ->join('user.localization', 'localization')
+            ->andWhere('localization = :localization')
+            ->andWhere('user.roles LIKE :worker OR user.roles LIKE :admin OR user.roles LIKE :superAdmin')
+            ->setParameter('localization', $localization)
+            ->setParameter('worker', '%ROLE_WORKER%')
+            ->setParameter('admin', '%ROLE_ADMIN%')
+            ->setParameter('superAdmin', '%ROLE_SUPER_ADMIN%')
+            ->getQuery()
+            ->getResult();
     }
 
     public function setLocalization($name, Company $company)

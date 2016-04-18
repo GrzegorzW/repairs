@@ -155,7 +155,10 @@
                                 <li class="list-group-item">
                                     <strong>Pracownicy: </strong>
                                     <ul class="list-inline">
-                                        {% for employee in localization_service.employeesByLocalizationId(localization.id) %}
+
+
+
+                                        {% for employee in localization_service.employeesByLocalizationId(localization) %}
                                             <li class="list-group-item-text">
                                                 <a href="{{ path('admin_management_edit_repairer',{'id':employee.id}) }}">
                                                     {{ employee.name }} {{ employee.surname }}
