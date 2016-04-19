@@ -7,6 +7,11 @@ img {
     color: white;
 }
 
+.electronics-background {
+    background-repeat: no-repeat;
+    background-position: 50% 39%;
+}
+
 tr {
     overflow: hidden;
 }
