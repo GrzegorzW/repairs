@@ -25,8 +25,8 @@
             </div>
 
             {% if app.user.localization.company.logoFile is not empty %}
-                <div id="logo" style="max-width: 150px;">
-                    <img src="
+                <div id="logo">
+                    <img style="max-height: 100px; max-width: 100px;" src="
                         {{ asset(vich_uploader_asset(app.user.localization.company, 'logoFile')) }}
                     "/>
                 </div>
