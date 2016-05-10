@@ -291,7 +291,6 @@ class UserManager
     public function releaseWorker(User $worker)
     {
         $worker->setEnabled(false);
-        $worker->setLocalization(null);
         $this->save($worker);
     }
 

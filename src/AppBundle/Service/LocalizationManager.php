@@ -41,6 +41,7 @@ class LocalizationManager
             ->join('user.localization', 'localization')
             ->andWhere('localization = :localization')
             ->andWhere('user.roles LIKE :worker OR user.roles LIKE :admin OR user.roles LIKE :superAdmin')
+            ->andWhere('user.enabled = true')
             ->setParameter('localization', $localization)
             ->setParameter('worker', '%ROLE_WORKER%')
             ->setParameter('admin', '%ROLE_ADMIN%')

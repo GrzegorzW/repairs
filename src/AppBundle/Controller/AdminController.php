@@ -290,6 +290,7 @@ class AdminController extends Controller
                 return $this->redirectToRoute('admin_management');
 
             } catch (\Exception $e) {
+                dump($e->getMessage());
                 $em->rollback();
                 $this->addFlash('error', $this->get('translator')->trans('flashDatabaseTransactionError'));
             }
