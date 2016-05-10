@@ -2,9 +2,7 @@
 /composer.phar
 .idea/
 composer.lock
-/web/css/
-/web/js/
-/web/images/
+
 /backup/*
 
 # Cache and logs (Symfony2)
@@ -22,6 +20,9 @@ app/logs
 
 /web/bundles/
 /web/uploads/
-
+/web/css/
+/web/js/
+/web/images/
+/web/locales/
 /app/phpunit.xml
 /phpunit.xml
