@@ -5,7 +5,6 @@ security:
     role_hierarchy:
         ROLE_PERMISSION_PUBLIC_MESSAGES:
         ROLE_PERMISSION_POKWITOWANIE_CREATE:
-        ROLE_PERMISSION_SALE_CREATE:
         ROLE_PERMISSION_USER_SECTION:
         ROLE_PERMISSION_CHANGE_REPAIRER:
         ROLE_PERMISSION_LOCALIZATION_REPAIRS:
@@ -22,7 +21,6 @@ security:
             - ROLE_ADMIN
             - ROLE_PERMISSION_PUBLIC_MESSAGES
             - ROLE_PERMISSION_POKWITOWANIE_CREATE
-            - ROLE_PERMISSION_SALE_CREATE
             - ROLE_PERMISSION_USER_SECTION
             - ROLE_PERMISSION_CHANGE_REPAIRER
             - ROLE_PERMISSION_LOCALIZATION_REPAIRS
@@ -51,7 +49,6 @@ security:
         - { path: ^/user, role: ROLE_USER }
         - { path: ^/worker/pokwitowanie, role: ROLE_PERMISSION_POKWITOWANIE_CREATE }
         - { path: ^/worker/user, role: ROLE_PERMISSION_USER_SECTION }
-        - { path: ^/worker/sale, role: ROLE_PERMISSION_SALE_CREATE }
         - { path: ^/worker, role: ROLE_WORKER }
         - { path: ^/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/register, role: IS_AUTHENTICATED_ANONYMOUSLY }

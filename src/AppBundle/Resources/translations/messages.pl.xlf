@@ -338,10 +338,6 @@
                 <source>ROLE_PERMISSION_POKWITOWANIE_CREATE</source>
                 <target>Dodawanie naprawy</target>
             </trans-unit>
-            <trans-unit id="85">
-                <source>ROLE_PERMISSION_SALE_CREATE</source>
-                <target>Dodawanie do sprzedanych</target>
-            </trans-unit>
             <trans-unit id="86">
                 <source>ROLE_PERMISSION_USER_SECTION</source>
                 <target>Dostęp do szczegółowych danych klienta</target>
