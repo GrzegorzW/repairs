@@ -15,17 +15,20 @@ Serdecznie pozdrawiamy.<br>
 <table>
     <tr>
         <td valign="top">
-            <a href="{{ company_service.getCompany.mainSite }}" target="_blank">
-                <img src="
-                    {% if app.user.localization.company.logoFile is not empty %}
-                        {{ app.request.getUriForPath(vich_uploader_asset(company, 'logoFile')) }}
-                    {% endif %}
-                " style="max-height: 60px;"
-                     alt="{{ company_service.getCompany.mainSite }}"/>
+            {% set company = company_service.getCompany %}
+            <a href="{{ company.mainSite }}" target="_blank">
+                {% if app.user and app.user.localization.company.logoFile is not empty %}
+                    <img
+                        src="{{ app.request.getUriForPath(vich_uploader_asset(company, 'logoFile')) }}"
+                        style="max-height: 60px;"
+                        alt="{{ company.mainSite }}"
+                    />
+                {% endif %}
+
             </a>
         </td>
         <td valign="top" style="min-width: 130px;">
-            <strong>{{ company_service.getCompany.name }}</strong><br>
+            <strong>{{ company.name }}</strong><br>
         </td>
     </tr>
 </table>
