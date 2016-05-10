@@ -9,7 +9,8 @@ composer.lock
 
 # Cache and logs (Symfony2)
 /app/cache/*git
-/app/logs/*
+app/cache
+app/logs
 !app/cache/.gitkeep
 !app/logs/.gitkeep
 
