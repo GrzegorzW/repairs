@@ -42,29 +42,11 @@ php app/console assetic:dump -e=prod
 chmod 777 -R var/cache
 chmod 777 -R var/logs
 
-#echo "Enter database user"
-#read dbuser
-#echo "Enter database password"
-#read dbpassword
-#echo "Enter database name: "
-#read dbname
-#echo "Chose dump localization: \n 1 dla Mac Mini \n 2 dla HP 8530w"
-#read dumpLocalization
-#
-#if [ $dumpLocalization = 1 ]
-#then
-#	dumpPath="pokwitowanie_2016-03-21.sql"
-#else
-#	dumpPath="/home/user/dumps/gorzow_pokwitowanie.sql"
-#fi
-
 mysql -u$parameters__database_user -p$parameters__database_password << EOF
 DROP SCHEMA IF EXISTS $parameters__database_name;
 CREATE DATABASE $parameters__database_name CHARACTER SET utf8 COLLATE utf8_general_ci;
 exit
 EOF
-
-php app/console doctrine:migrations:migrate 20160224144102 --no-interaction
 
 mysql -u$parameters__database_user -p$parameters__database_password << EOF
 USE $parameters__database_name;
