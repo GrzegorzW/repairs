@@ -1,7 +1,0 @@
-//todo data przekazania sprzetu do podwykonawcy
-//todo nieprzeczytane wiadomosci mozna zrobic za pomoca kryterium wyszukiwania
-//todo brak informacji o tym, ze email resetujacy zostal wyslany
-
-//todo przuycisk powrotu na stronie user->naprawa
-
-//todo po zakonczeniu naprawy w podsumowaniu zamiast kwota do zapłaty ustawić zapłacono -  ktos zrezygnuje z naprawy a wyceny zostana podliczone
